@@ -1,0 +1,88 @@
+%------------------------------------------------------------------------------
+% Template file for the submission of articles to IUCr journals in LaTeX2e
+% using the iucrjournals document class (file iucrjournals.cls)
+% This work has been dedicated to the public domain
+% License: CC0 1.0 Universal
+% https://creativecommons.org/publicdomain/zero/1.0/
+%------------------------------------------------------------------------------
+% This template file and associated class and style files produce documents in
+% a preprint style suitable for submission and review purposes.
+% The iucrjournals.cls requires a small selection of packages from standard TeXLive
+% distributions and contains a minimal set of macros to define content and apply
+% formatting. BibTeX and iucr.bst should be used for references (using harvard.sty).
+% If you wish to use additional packages, please reference them in this document and
+% please only use packages included in standard TeXLive distributions in order to
+% avoid compilation problems during the submission process.
+%------------------------------------------------------------------------------
+
+\documentclass{iucrjournals}
+
+% Add extra packages here, e.g.
+% \usepackage{myfavouritepackage}
+% load standard group packages and shortcuts (can be found at billingegroup/latex_headers/ at github.org)
+\input{packages}
+\input{cmds_general}
+\input{cmds_programs}
+% check in cmds\_general.tex how to add your own color/commenting command
+
+\title{
+{{ cookiecutter.title }}
+}
+
+% Authors and affiliations (uses the standard authblk package):
+% Author affiliations are indicated by lowercase letters in square brackets in the \author macro.
+% Affiliations (referenced by the lowercase letters in square brackets) are listed after all the authors have been defined.
+% The email addresses of corresponding/contact authors can be included using:
+% \IUCrCemaillink{corrauthor@org.org}
+% Other co-author email addresses can be included using:
+% \IUCrEmaillink{coauthor@org.org}
+% ORCiDs can be included using:
+% \IUCrOrcidlink{xxxx-xxxx-xxxx-xxxx}
+% Author footnotes can be included using:
+% \IUCrAufn{Text...}
+% and to apply the same footnote to another author use:
+% \IUCrAufn[1]{}
+% where the number in square brackets refers to the numerical order of the
+% previously defined footnote.
+% For example:
+% \author[a]{Anne Author\IUCrCemaillink{corrauthor@org.org}\IUCrOrcidlink{xxxx-xxxx-xxxx-xxxx}}
+
+\author[a]{
+{{ cookiecutter.author }}
+}
+\author[a]{Simon J. L. Billinge}
+\affil[a]{Department of Applied Physics and Applied Mathematics, Columbia University, New York, NY 10025, USA}
+
+\begin{document}
+\maketitle
+
+\begin{synopsis}
+One or two sentences suitable for the Journal contents listing and use in promoting your article via social media, highlighting the findings and significance of your work.
+\end{synopsis}
+
+\begin{abstract}
+Single paragraph stating as specifically and as quantitatively as possible the principal results obtained, and providing an indication of the broader significance of the work. The abstract should be capable of being understood on its own without access to the text or figures.
+\end{abstract}
+
+\keywords{ Three or four key words/phrases separated by semi-colons. }
+
+\begin{enumerate}
+\section{Section title}
+\item \doing how to mark if you are working on a skel
+\item \done how to make if we can close a skel
+\end{enumerate}
+
+\begin{acknowledgements}
+The contributions of non-authors etc. should be given here.
+\end{acknowledgements}
+
+\ConflictsOfInterest{Please declare any conflicts of interest, or declare  that there are no conflicts of interest.
+}
+
+\DataAvailability{Please state how the data supporting the results reported in your article can be accessed, e.g. within the article, as published supporting material, in repositories, upon request...
+}
+
+\bibliography{bg-pdf-standards, billinge-group-bib}
+\subfile{supplementary_information}
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

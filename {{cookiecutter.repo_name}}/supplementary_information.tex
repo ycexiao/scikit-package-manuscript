@@ -1,0 +1,30 @@
+\documentclass{iucrjournals}
+% load standard group packages and shortcuts (can be found at billingegroup/latex_headers/ at github.org)
+\input{packages}
+\input{cmds_general}
+\input{cmds_programs}
+
+\title{Supplementary Information for: \\ \vspace{1cm}
+{{cookiecutter.title}}
+}
+
+\author[a]{
+{{ cookiecutter.author }}
+}
+\author[a]{Simon J. L. Billinge}
+\affil[a]{Department of Applied Physics and Applied Mathematics, Columbia University, New York, NY 10025, USA}
+
+\begin{document}
+\maketitle
+
+% Setups for Supplementary
+\setcounter{figure}{0}
+\makeatletter 
+\let\c@table\c@figure
+\makeatother
+\renewcommand*{\thefigure}{S\arabic{figure}}
+\renewcommand*{\thetable}{S\arabic{table}}
+
+\section{Section goes here.}
+
+\end{document}
