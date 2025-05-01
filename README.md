@@ -4,7 +4,7 @@ This is a Cookiecutter template for creating Overleaf LaTex paper repositories u
 - Auto-generates the repository name, paper title, and one author name.
 - Uses the IUCR LaTeX template (`iucr.bst`, `iucrit.bst`, `iucrjournals.cls`, `fig1.png`).
 - Includes dynamically generated files `cmds_general.tex`, `cmds_programs.tex`, and `packages.tex` from https://github.com/Billingegroup/latex-headers.
-- Includes empty .bib files: `bg-pdf-standards.bib`, `billinge-group-bib.bib`, ``hand_coded.bib``, and ``repo_name.bib``.
+- Includes empty .bib files: `bg-pdf-standards.bib`, `billinge-group-bib.bib`, ``hand-coded.bib``, and ``repo_name.bib``.
 
 # HOW TO USE
 
