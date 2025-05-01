@@ -2,12 +2,15 @@ Here's the cookiecutter for creating an Overleaf GitHub repository.
 
 Currently, it generates the repo name, paper title, and one author name based on the input provided.
 
-The template uses source files from IUCr LaTeX macro package (`iucr.bst`, `iucrit.bst`, `iucrjournals.cls`).
+The template uses source files from IUCr LaTeX macro package (`iucr.bst`, `iucrit.bst`, `iucrjournals.cls`, `fig1.png`).
 
-Please refer to https://github.com/Billingegroup/latex-headers for updates for
-`cmds_general.tex`, `cmds_programs.tex`, and `packages.tex`.
+We dynamically generate `cmds_general.tex`, `cmds_programs.tex`, and `packages.tex`
+from https://github.com/Billingegroup/latex-headers.
 
-Please check zotero for the most up-to-date bibliographies:`bg-pdf-standards.bib` and `billinge-group-bib.bib`.
+Please export the most up-to-date bibliographies from Zotero:`bg-pdf-standards.bib` and `billinge-group-bib.bib`.
+The template here is currently empty.
+There is also a .bib file named after the repository (available in Zotero), and another one here ``hand_coded.bib``.
+
 
 # HOW TO USE
 
@@ -15,8 +18,7 @@ Please check zotero for the most up-to-date bibliographies:`bg-pdf-standards.bib
    Install Cookiecutter, run the template, and follow the prompts:
 
    ```bash
-   cookiecutter cookiecutter-overleaf # assumes the template is in your current directory
-   python cookiecutter-overleaf/post_gen_project.py # copies the required .bib and .tex files
+   cookiecutter cookiecutter-overleaf
    ```
 
 2. Push to GitHub if desired:

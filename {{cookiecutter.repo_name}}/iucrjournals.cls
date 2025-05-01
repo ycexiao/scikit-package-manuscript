@@ -1,3 +1,4 @@
+{% raw %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is the IUCr LaTeX2e class macro file iucrjournals.cls
 % This work has been dedicated to the public domain
@@ -382,4 +383,4 @@ $^{%
     \setlength{\rightmargin}{\leftmargin}%
   }%
   \item\relax\textbf{Data availability:} #1\endlist\end{center}\medskip}
-
+{% endraw %}
