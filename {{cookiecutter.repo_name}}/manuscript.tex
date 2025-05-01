@@ -70,6 +70,76 @@ Single paragraph stating as specifically and as quantitatively as possible the p
 \section{Section title}
 \item \doing how to mark if you are working on a skel
 \item \done how to make if we can close a skel
+
+\begin{figure}[ht] %
+\label{fig:figure1}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{fig1.png} % NB use pdflatex for non-postscript
+\end{center}
+\caption{Caption \protect\cite{knuth84}} % NB \protect\cite{...} is required in floating figures
+\end{figure}
+
+\subsection{Subsection title}
+
+Text text text text text text text text text text text text text text
+text text text text text text text.
+
+\subsubsection{Subsubsection title}
+
+Text text text text text text text text text text text text text text
+text text text text text text text.
+
+
+
+\section{Section title}
+
+Text text text text text text text text text text text text text text
+text text text text text text text.
+
+\subsection{Subsection title}
+
+Text text text text text text text text text text text text text text
+text text text text text text text.
+
+\subsubsection{Subsubsection title}
+
+Text text text text text text text text text text text text text text
+text text text text text text text.
+
+% Basic table
+
+\begin{table}[ht]
+\caption{Caption to table \protect\cite{lamport86}} % NB \protect\cite{...} is required in floating tables
+\smallskip
+\begin{center}
+\begin{tabular}{llcr}
+\midrule
+ HEADING    & FOR        & EACH       & COLUMN     \\
+\midrule
+ entry      & entry      & entry      & entry      \\
+ entry      & entry      & entry      & entry      \\
+ entry      & entry      & entry      & entry      \\
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\appendix % if required
+\section{Appendix title}
+
+Text text text text text text text text text text text text text text
+text text text text text text text.
+
+\subsection{Appendix subsection title}
+
+Text text text text text text text text text text text text text text
+text text text text text text text.
+
+\subsubsection{Appendix subsubsection title}
+
+Text text text text text text text text text text text text text text
+text text text text text text text.
+
 \end{enumerate}
 
 \begin{acknowledgements}

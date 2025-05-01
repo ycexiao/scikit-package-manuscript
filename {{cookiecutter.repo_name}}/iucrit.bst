@@ -1,3 +1,4 @@
+{% raw %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is the IUCr BibTeX bibliography style file for International Tables   %
 % iucrit.bst                                                                 %
@@ -1555,3 +1556,4 @@ EXECUTE {end.bib}
 %% End of file `iucr.bst'.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% endraw %}

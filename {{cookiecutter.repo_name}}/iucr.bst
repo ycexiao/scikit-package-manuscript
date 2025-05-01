@@ -1,3 +1,4 @@
+{% raw %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is the IUCr BibTeX bibliography style file iucr.bst                   %
 % Copyright (c) 1998-2023 International Union of Crystallography             % 
@@ -1575,3 +1576,4 @@ EXECUTE {end.bib}
 %% End of file `iucr.bst'.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% endraw %}

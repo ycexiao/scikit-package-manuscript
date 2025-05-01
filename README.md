@@ -2,7 +2,7 @@ Here's the cookiecutter for creating an Overleaf GitHub repository.
 
 Currently, it generates the repo name, paper title, and one author name based on the input provided.
 
-The template uses source files from IUCr LaTeX macro package (`iucr.bst`, `iucrit.bst`, `iucrjournals.cls`).
+The template uses source files from IUCr LaTeX macro package (`iucr.bst`, `iucrit.bst`, `iucrjournals.cls`, `fig1.png`).
 
 We dynamically generate `cmds_general.tex`, `cmds_programs.tex`, and `packages.tex`
 from https://github.com/Billingegroup/latex-headers.
