@@ -7,7 +7,10 @@ The template uses source files from IUCr LaTeX macro package (`iucr.bst`, `iucri
 Please refer to https://github.com/Billingegroup/latex-headers for updates for
 `cmds_general.tex`, `cmds_programs.tex`, and `packages.tex`.
 
-Please check zotero for the most up-to-date bibliographies:`bg-pdf-standards.bib` and `billinge-group-bib.bib`.
+Please export the most up-to-date bibliographies from Zotero:`bg-pdf-standards.bib` and `billinge-group-bib.bib`.
+The template here is currently empty.
+There is also a .bib file named after the repository (available in Zotero), and another one here ``hand_coded.bib``.
+
 
 # HOW TO USE
 
