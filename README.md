@@ -1,16 +1,10 @@
-Here's the cookiecutter for creating an Overleaf GitHub repository.
+This is a Cookiecutter template for creating Overleaf LaTex paper repositories using Billinge group standards.
 
-Currently, it generates the repo name, paper title, and one author name based on the input provided.
-
-The template uses source files from IUCr LaTeX macro package (`iucr.bst`, `iucrit.bst`, `iucrjournals.cls`, `fig1.png`).
-
-We dynamically generate `cmds_general.tex`, `cmds_programs.tex`, and `packages.tex`
-from https://github.com/Billingegroup/latex-headers.
-
-Please export the most up-to-date bibliographies from Zotero:`bg-pdf-standards.bib` and `billinge-group-bib.bib`.
-The template here is currently empty.
-There is also a .bib file named after the repository (available in Zotero), and another one here ``hand_coded.bib``.
-
+# Features:
+- Auto-generates the repository name, paper title, and one author name.
+- Uses the IUCR LaTeX template (`iucr.bst`, `iucrit.bst`, `iucrjournals.cls`, `fig1.png`).
+- Includes dynamically generated files `cmds_general.tex`, `cmds_programs.tex`, and `packages.tex` from https://github.com/Billingegroup/latex-headers.
+- Includes empty .bib files: `bg-pdf-standards.bib`, `billinge-group-bib.bib`, ``hand_coded.bib``, and ``repo_name.bib``.
 
 # HOW TO USE
 
@@ -21,8 +15,8 @@ There is also a .bib file named after the repository (available in Zotero), and 
    cookiecutter cookiecutter-overleaf
    ```
 
-2. Push to GitHub if desired:
+2. Push to GitHub:
    ```bash
-   git remote add origin git@github.com:yourusername/my_paper.git
+   git remote add origin git@github.com:yourusername/repo_name.git
    git push -u origin main
    ```
