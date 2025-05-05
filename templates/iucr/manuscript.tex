@@ -25,8 +25,7 @@
 \input{cmds_programs}
 % check in cmds\_general.tex how to add your own color/commenting command
 
-\title{
-{{ cookiecutter.title }}
+\title{Title here
 }
 
 % Authors and affiliations (uses the standard authblk package):
@@ -47,10 +46,7 @@
 % For example:
 % \author[a]{Anne Author\IUCrCemaillink{corrauthor@org.org}\IUCrOrcidlink{xxxx-xxxx-xxxx-xxxx}}
 
-\author[a]{
-{{ cookiecutter.author }}
-}
-\author[a]{Simon J. L. Billinge}
+\author[a]{Simon~J.~L. Billinge\IUCrCemaillink{sb2896@columbia.edu}\IUCrOrcidlink{0000-0002-9734-4998}}
 \affil[a]{Department of Applied Physics and Applied Mathematics, Columbia University, New York, NY 10025, USA}
 
 \begin{document}
@@ -140,10 +136,13 @@ text text text text text text text.
 Text text text text text text text text text text text text text text
 text text text text text text text.
 
-\end{enumerate}
-
 \begin{acknowledgements}
-The contributions of non-authors etc. should be given here.
+\item Thank friends and contributors
+\item Acknowledge beamtlines with grants if required
+\item Acknowledge funding. Contact all PIs in the author list for their ackno statements.
+  bg statements are in the group wiki.  Here is an example: PDF analysis, modeling and writing
+  in the Billinge group was supported by U.S. Department of Energy, Office of Science, Office
+  of Basic Energy Sciences (DOE-BES) under contract No. DE-SC0024141.
 \end{acknowledgements}
 
 \ConflictsOfInterest{Please declare any conflicts of interest, or declare  that there are no conflicts of interest.
@@ -152,7 +151,9 @@ The contributions of non-authors etc. should be given here.
 \DataAvailability{Please state how the data supporting the results reported in your article can be accessed, e.g. within the article, as published supporting material, in repositories, upon request...
 }
 
-\bibliography{bg-pdf-standards, billinge-group-bib}
-\subfile{supplementary_information}
+\end{enumerate}
+
+\bibliography{bg-pdf-standards, billinge-group-bib, {{ cookiecutter.repo_name }}.bib, hand-coded.bib}
+\subfile{supplementary-information}
 \end{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
