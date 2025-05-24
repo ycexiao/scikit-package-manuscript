@@ -1,3 +1,4 @@
 {
-  "repo_name": "sb-paper-id"
+  "project_slug": "sb-paper-id",
+  "template": ["iucr"]
 }
