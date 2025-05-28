@@ -3,9 +3,8 @@ import shutil
 import subprocess
 import tempfile
 from importlib.resources import as_file, files
+import sys
 
-
-from envs import cookiecutter
 
 from importlib.resources import files, as_file
 from pathlib import Path
@@ -69,6 +68,7 @@ def load_template(source_dir, target_dir):
 
 
 def main():
+    sys.path.append(str(Path().cwd().parent))
     target_directory = Path().cwd()
     copy_package_files("scikit-package-manuscript.templates", "{{ cookiecutter.template }}", target_directory)
     clone_headers(target_directory)
