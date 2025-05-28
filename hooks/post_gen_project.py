@@ -3,9 +3,8 @@ import shutil
 import subprocess
 import tempfile
 from importlib.resources import as_file, files
+import sys
 
-
-from envs import cookiecutter
 
 from importlib.resources import files, as_file
 from pathlib import Path
