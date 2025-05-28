@@ -72,8 +72,8 @@ def main():
     target_directory = Path().cwd()
     copy_package_files("scikit-package-manuscript.templates", "{{ cookiecutter.template }}", target_directory)
     clone_headers(target_directory)
-    template_directory = Path().cwd() / cookiecutter.template
-    load_template(template_directory, target_directory)
+    # template_directory = Path().cwd() / cookiecutter.template
+    # load_template(template_directory, target_directory)
 
 
 if __name__ == "__main__":
