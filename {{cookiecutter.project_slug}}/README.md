@@ -3,7 +3,7 @@ This project uses source files from the IUCr LaTeX macro package,
 including `iucr.bst`, `iucrit.bst`, `iucrjournals.cls`, `fig1.png` (example figure).
 
 It also includes the shared LaTex macros, 
-`cmds_general.tex`, `cmds_programs.tex`, and `packages.tex`,
+`cmds-general.tex`, `cmds-programs.tex`, and `packages.tex`,
 from https://github.com/Billingegroup/latex-headers.
 
 ## Bibliography Setup
