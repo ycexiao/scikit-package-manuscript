@@ -37,7 +37,7 @@ def copy_package_files(package: str, resource_dir: str, target_dir: Path):
 
 def clone_headers(target_dir):
     repo = "https://github.com/Billingegroup/latex-headers"
-    headers = ["packages.tex", "cmds_general.tex", "cmds_programs.tex"]
+    headers = ["packages.tex", "cmds-general.tex", "cmds-programs.tex"]
     target_path = Path(target_dir)
 
     with tempfile.TemporaryDirectory() as tmp:
