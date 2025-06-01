@@ -5,3 +5,11 @@ repos:
     rev: 0.6.1
     hooks:
       - id: nbstripout
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0      
+    hooks:
+      - id: no-commit-to-branch
+        name: Prevent Commit to Main Branch
+        args: ["--branch", "main"]
+        stages: [pre-commit]
+      - id: check-added-large-files
