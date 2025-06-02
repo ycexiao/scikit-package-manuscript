@@ -70,7 +70,7 @@ def load_template(source_dir, target_dir):
 def main():
     sys.path.append(str(Path().cwd().parent))
     target_directory = Path().cwd()
-    copy_package_files("scikit-package-manuscript.templates", "{{ cookiecutter.template }}", target_directory)
+    copy_package_files("scikit-package-manuscript.templates", "{{ cookiecutter.journal_template }}", target_directory)
     clone_headers(target_directory)
     # template_directory = Path().cwd() / cookiecutter.template
     # load_template(template_directory, target_directory)
