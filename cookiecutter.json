@@ -1,4 +1,5 @@
 {
   "project_slug": "sb-paper-id",
-  "journal_template": ["iucr"]
+  "journal_template": ["iucr"],
+  "latex_headers_repo": "https://github.com/Billingegroup/latex-headers"
 }
