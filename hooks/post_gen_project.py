@@ -108,16 +108,15 @@ def sort_blocks(blocks):
     return package_blocks, command_blocks
     
     
-def insert_blocks(target_dir, target_file, package_blocks, command_blocks):
+def insert_blocks(target_file, package_blocks, command_blocks):
     """
     Inserts LaTeX header blocks into the manuscript.tex file in the target directory after the \\documentclass line.
     """
-    target_path = Path(target_dir) / target_file
     before_insert_region = ""
     after_insert_region = ""
     before_insert = True
     insert_start = "\\documentclass"
-    with open(target_path, 'r') as f:
+    with open(target_file, 'r') as f:
         for line in f:
             if before_insert:
                 before_insert_region += line
@@ -135,10 +134,10 @@ def insert_blocks(target_dir, target_file, package_blocks, command_blocks):
         headers_content += block['content']
     new_content = before_insert_region + headers_content + after_insert_region
 
-    with open(target_path, 'w') as f:
+    with open(target_file, 'w') as f:
         f.write(new_content)
 
-    print(f"Headers written to {target_path}")
+    print(f"Headers written to {target_file}")
 
 
 
@@ -149,8 +148,8 @@ def main():
     headers = clone_headers("{{ cookiecutter.latex_headers_repo }}")
     header_blocks = extract_blocks(headers)
     package_blocks, command_blocks = sort_blocks(header_blocks)
-    target_file = "manuscript.tex"
-    insert_blocks(target_directory, target_file , package_blocks, command_blocks)
+    target_file = target_directory / "manuscript.tex"
+    insert_blocks(target_file, package_blocks, command_blocks)
 
 if __name__ == "__main__":
     main()
