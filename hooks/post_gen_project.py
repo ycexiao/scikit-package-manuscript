@@ -29,7 +29,7 @@ def copy_package_files(resource_dir: str, target_dir: Path):
         resource_dir = tmp_path / "templates" /resource_dir
 
         # Use as_file to ensure we get a real path (even if inside a zip)
-        with as_file(resource_root) as root_path:
+        with as_file(resource_dir) as root_path:
             if not root_path.is_dir():
                 raise NotADirectoryError(f"{resource_root} is not a directory")
 
