@@ -6,6 +6,7 @@ from importlib.resources import as_file, files
 import sys
 import re
 
+main_tex_file = "manuscript.tex"
 
 
 def copy_package_files(resource_dir: str, target_dir: Path):
@@ -148,7 +149,7 @@ def main():
     headers = clone_headers("{{ cookiecutter.latex_headers_repo }}")
     header_blocks = extract_blocks(headers)
     package_blocks, command_blocks = sort_blocks(header_blocks)
-    target_file = target_directory / "manuscript.tex"
+    target_file = target_directory / main_tex_file
     insert_blocks(target_file, package_blocks, command_blocks)
 
 if __name__ == "__main__":
