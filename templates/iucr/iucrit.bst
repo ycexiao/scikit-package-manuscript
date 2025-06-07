@@ -2,11 +2,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is the IUCr BibTeX bibliography style file for International Tables   %
 % iucrit.bst                                                                 %
-% Copyright (c) 2016 International Union of Crystallography                  % 
-%                                                                            % 
-% Usage:  \bibliographystyle{iucrit}                                         % 
-%                                                                            % 
-% Maintained by: Brian McMahon bm@iucr.org                                   % 
+% Copyright (c) 2016 International Union of Crystallography                  %
+%                                                                            %
+% Usage:  \bibliographystyle{iucrit}                                         %
+%                                                                            %
+% Maintained by: Brian McMahon bm@iucr.org                                   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ChangeLog:                                                                 %
 %   1.0                                                                      %
@@ -931,7 +931,7 @@ FUNCTION {article}
       emphasize
       "journal" output.check
 % Want to have comma if last character of the journal field is not '.'
-% replace unadorned add.blank with the following "non.stop" test 
+% replace unadorned add.blank with the following "non.stop" test
 % (BM: 1998-07-15)
       non.stop
         { skip$ }
@@ -1211,7 +1211,7 @@ FUNCTION {techreport}
   new.block
 % Report name NOT italic; modify punctuation (bm: 1998-07-15)
   % format.tr.number emphasize output.nonnull
-  format.tr.number output.nonnull add.period$ add.blank 
+  format.tr.number output.nonnull add.period$ add.blank
   institution "institution" output.check
   address output
   new.block

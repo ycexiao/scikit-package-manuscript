@@ -3,7 +3,7 @@
 % This is the IUCr LaTeX2e class macro file iucrjournals.cls
 % This work has been dedicated to the public domain
 % License: CC0 1.0 Universal
-% https://creativecommons.org/publicdomain/zero/1.0/ 
+% https://creativecommons.org/publicdomain/zero/1.0/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Usage:
 %  \documentclass{iucrjournals}
@@ -19,7 +19,7 @@
 
 \RequirePackage[parfill]{parskip}
 \RequirePackage{setspace}
-\onehalfspacing 
+\onehalfspacing
 
 \RequirePackage[margin=1in]{geometry}
 \RequirePackage{float}
@@ -37,7 +37,7 @@
 \RequirePackage{harvard}
 % The following hack addresses a problem with bibtex failing when
 % there is whitespace in a comma-separated list of labels passed as
-% an argument to \cite - see 
+% an argument to \cite - see
 % http://tex.stackexchange.com/questions/4517/cite-that-tolerates-whitespace
 %
 \let\OLDcite\cite
@@ -52,7 +52,7 @@
 }
 \newcommand{\@strip}[2]{%
   \def\my@list{}\tok@scan#2\relax\let#1\my@list}
-\renewcommand{\cite}[1]{\@strip\@args{#1}\OLDcite\@args} 
+\renewcommand{\cite}[1]{\@strip\@args{#1}\OLDcite\@args}
 
 % The iucr.bst BibTeX bibliography style requires the harvard.sty package.
 % IUCr citations are similar to the "dcu" style within harvard.sty, but
@@ -207,7 +207,7 @@ xscale=\IUCr@OrigHeightRecipE*\IUCr@curXheightE,transform shape]
 \newcommand{\IUCrCemaillink}[1]{\,\IUCr@cemaillinkX{#1}\,}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% author footnotes for use in author block 
+% author footnotes for use in author block
 % (alternative to using \thanks or \footnote)
 
 \newcounter{IUCr@aufnc}
@@ -215,7 +215,7 @@ xscale=\IUCr@OrigHeightRecipE*\IUCr@curXheightE,transform shape]
 \newcommand{\IUCr@storeaufn}[1]{\stepcounter{IUCr@aufnc}\global\expandafter\def\csname aufnX\theIUCr@aufnc\endcsname{#1}}
 \newcommand{\IUCr@printaufn}[1]{\footnotesize\IUCr@fnsymbol{#1}\csname aufnX#1\endcsname\\}
 \newcommand{\IUCr@printauthornotes}{%
-\ifnum\theIUCr@aufnc>0 
+\ifnum\theIUCr@aufnc>0
 \begin{center}
 \vskip-22pt
 \newcounter{tmpIUCr@aufnc}
@@ -231,7 +231,7 @@ xscale=\IUCr@OrigHeightRecipE*\IUCr@curXheightE,transform shape]
 \bigskip
 \fi
 }
-\newcommand{\IUCrAufn}[2][0]{% 
+\newcommand{\IUCrAufn}[2][0]{%
 % store the note as a new macro for later output using \IUCr@printauthornotes
 \if0#1%
 \IUCr@storeaufn{#2}%
@@ -277,17 +277,17 @@ $^{%
     \ifcase#1% 0
     \or % 1
       \dagger
-    \or % 2  
+    \or % 2
       \ddagger
-    \or % 3   
+    \or % 3
       \mathsection
     \or % 4
       \mathparagraph
     \or \|
     \else % >= 6
-      #1  
+      #1
     \fi
-  }%   
+  }%
 }
 
 % print author notes after maketitle
@@ -315,7 +315,7 @@ $^{%
   \item\relax}
  {\endlist\bigskip}
 
-\newenvironment{synopsis}%                       
+\newenvironment{synopsis}%
 {%\small
   \begin{center}
   \bfseries Synopsis\vspace{-.5em}\vspace{0pt}
@@ -340,7 +340,7 @@ $^{%
 \def\affil#1#{\origaffilA{#1}}
 \def\origaffilA#1#2{\origaffil#1{\footnotesize #2}}
 
-\newenvironment{acknowledgements}%                       
+\newenvironment{acknowledgements}%
 {%\small
 \bigskip
   %\begin{center}
@@ -353,7 +353,7 @@ $^{%
   \item\relax}
  {\endlist\medskip}
 
-\newenvironment{funding}%                       
+\newenvironment{funding}%
 {%\small
 \medskip
   %\begin{center}

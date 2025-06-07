@@ -1,21 +1,24 @@
-from pathlib import Path
+import re
 import shutil
 import subprocess
-import tempfile
-from importlib.resources import as_file, files
 import sys
-import re
+import tempfile
+from importlib.resources import as_file
+from pathlib import Path
 
 MANUSCRIPT_FILENAME = "manuscript.tex"
 
 
 def copy_package_files(resource_dir: str, target_dir: Path):
     """
-    Copies all files from a package's internal resource directory to a target directory.
+    Copies files from a package's resource directory to a target directory.
 
-    Args:
-        resource_dir (str): Subdirectory inside the package (relative to package root).
-        target_dir (Path): Filesystem path to copy files to.
+    Parameters:
+    ===========
+    resource_dir : str
+      The subdirectory inside the package (relative to package root).
+    target_dir : Path
+      TheFilesystem path to copy files to.
     """
     repo = "https://github.com/scikit-package/scikit-package-manuscript.git"
     target_dir = Path(target_dir)
@@ -25,12 +28,12 @@ def copy_package_files(resource_dir: str, target_dir: Path):
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         subprocess.run(["git", "clone", repo, str(tmp)], check=True)
-        resource_dir = tmp_path / "templates" /resource_dir
+        resource_dir = tmp_path / "templates" / resource_dir
 
         # Use as_file to ensure we get a real path (even if inside a zip)
         with as_file(resource_dir) as root_path:
             if not root_path.is_dir():
-                raise NotADirectoryError(f"{resource_root} is not a directory")
+                raise NotADirectoryError(f"{resource_dir} is not a directory")
 
             for item in root_path.iterdir():
                 if item.is_file():
@@ -49,7 +52,6 @@ def clone_headers(repo_url):
             if item.is_file() and str(item).endswith(".tex"):
                 headers += item.read_text()+'\n'
 
-    return headers
 
 def extract_blocks(header_str):
     """
@@ -86,9 +88,12 @@ def extract_blocks(header_str):
                 next_line_same_block = False
     return blocks
 
+
 def sort_blocks(blocks):
     """
-    Classify extracted blocks into package and command blocks and sort each type of the blocks alpha-numerically by their names.
+    Classify extracted blocks into package and command blocks
+
+    Sort each type of the blocks alpha-numerically by their names.
     """
     package_keyword = ['usepackage']
     command_keyword = ['newcommand', 'renewcommand', 'providecommand']
@@ -103,15 +108,23 @@ def sort_blocks(blocks):
         else:
             command_blocks.append(blocks[i])
 
-    get_alphanum_key = lambda s:  [int(text) if text.isdigit() else text.lower() for text in re.split('([0-9]+)', s)]
-    package_blocks = sorted(package_blocks, key=lambda x: get_alphanum_key(x['name']))
-    command_blocks = sorted(command_blocks, key=lambda x: get_alphanum_key(x['name']))
+    package_blocks = sorted(package_blocks,
+                            key=lambda x: get_alphanum_key(x['name']))
+    command_blocks = sorted(command_blocks,
+                            key=lambda x: get_alphanum_key(x['name']))
     return package_blocks, command_blocks
-    
-    
+
+
+def get_alphanum_key(name):
+    return [int(text) if text.isdigit() else text.lower()
+            for text in re.split('([0-9]+)', name)]
+
+
 def insert_blocks(target_file, package_blocks, command_blocks):
     """
-    Inserts LaTeX header blocks into the manuscript.tex file in the target directory after the \\documentclass line.
+    Inserts LaTeX header blocks into the manuscript.tex file
+
+    Blocks are inserted after the \\documentclass line.
     """
     before_insert_region = ""
     after_insert_region = ""
@@ -123,14 +136,15 @@ def insert_blocks(target_file, package_blocks, command_blocks):
                 before_insert_region += line
             else:
                 after_insert_region += line
-            if len(line)>= len(insert_start) and line[:len(insert_start)] == insert_start:
+            if len(line) >= len(insert_start) \
+                    and line[:len(insert_start)] == insert_start:
                 before_insert = False
                 before_insert_region += "\n% Start of inserted headers\n"
-                after_insert_region += "% End of inserted headers\n" 
-    
+                after_insert_region += "% End of inserted headers\n"
+
     headers_content = ""
-    for block in package_blocks:    
-        headers_content += block['content'] 
+    for block in package_blocks:
+        headers_content += block['content']
     for block in command_blocks:
         headers_content += block['content']
     new_content = before_insert_region + headers_content + after_insert_region
@@ -141,16 +155,15 @@ def insert_blocks(target_file, package_blocks, command_blocks):
     print(f"Headers written to {target_file}")
 
 
-
 def main():
     sys.path.append(str(Path().cwd().parent))
     target_directory = Path().cwd()
-    copy_package_files("{{ cookiecutter.journal_template }}", target_directory)
-    headers = clone_headers("{{ cookiecutter.latex_headers_repo }}")
-    header_blocks = extract_blocks(headers)
-    package_blocks, command_blocks = sort_blocks(header_blocks)
-    target_file = target_directory / MANUSCRIPT_FILENAME
-    insert_blocks(target_file, package_blocks, command_blocks)
+    copy_package_files("scikit-package-manuscript.templates",
+                       "{{ cookiecutter.template }}", target_directory)
+    clone_headers(target_directory)
+    # template_directory = Path().cwd() / cookiecutter.template
+    # load_template(template_directory, target_directory)
+
 
 if __name__ == "__main__":
     main()

@@ -90,3 +90,11 @@ target/
 
 # Ipython Notebook
 .ipynb_checkpoints
+
+# latex
+*.aux
+*.bbl
+*.blg
+*.log
+*.synctex
+manuscript.pdf
