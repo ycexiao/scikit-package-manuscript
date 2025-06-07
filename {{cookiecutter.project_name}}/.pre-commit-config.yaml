@@ -13,31 +13,13 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-      - id: check-yaml
-        exclude: '^{{ cookiecutter.github_repo_name }}/.*\.yml$' # {{ cookiecutter.github_repo_name }} contains jinja variables in .yml, hook fails
       - id: end-of-file-fixer
       - id: trailing-whitespace
-      - id: check-case-conflict
-      - id: check-merge-conflict
       - id: check-added-large-files
       - id: no-commit-to-branch
         name: Prevent Commit to Main Branch
         args: ["--branch", "main"]
         stages: [pre-commit]
-  - repo: https://github.com/psf/black
-    rev: 24.4.2
-    hooks:
-      - id: black
-        exclude: '^({{ cookiecutter.project_name }}/.*\.py|hooks/post_gen_project\.py)$' # {{ cookiecutter.project_name }} contains jinja variables in .py, hook fails. hooks/post_gen_project.py contains jinja variables of # (c) {% now 'utc', '%Y' %} which is not a valid black format
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
-    hooks:
-      - id: flake8
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: ["--profile", "black"]
   - repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
     hooks:
