@@ -1,23 +1,23 @@
-from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 from importlib.resources import as_file, files
-import sys
-
-
-from importlib.resources import files, as_file
 from pathlib import Path
-import shutil
+
 
 def copy_package_files(package: str, resource_dir: str, target_dir: Path):
     """
-    Copies all files from a package's internal resource directory to a target directory.
+    Copies files from a package's resource directory to a target directory.
 
-    Args:
-        package (str): Dotted path to the package (e.g., "mypackage.resources").
-        resource_dir (str): Subdirectory inside the package (relative to package root).
-        target_dir (Path): Filesystem path to copy files to.
+    Parameters:
+    ===========
+    package (str):
+      The dotted path to the package (e.g., "mypackage.resources").
+    resource_dir (str):
+      The subdirectory inside the package (relative to package root).
+    target_dir (Path):
+      TheFilesystem path to copy files to.
     """
     target_dir = Path(target_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -51,6 +51,7 @@ def clone_headers(target_dir):
                 raise FileNotFoundError(f"Missing file: {src}")
             shutil.copy(src, dst)
 
+
 def load_template(source_dir, target_dir):
     source_path = Path(source_dir)
     target_path = Path(target_dir)
@@ -70,7 +71,8 @@ def load_template(source_dir, target_dir):
 def main():
     sys.path.append(str(Path().cwd().parent))
     target_directory = Path().cwd()
-    copy_package_files("scikit-package-manuscript.templates", "{{ cookiecutter.template }}", target_directory)
+    copy_package_files("scikit-package-manuscript.templates",
+                       "{{ cookiecutter.template }}", target_directory)
     clone_headers(target_directory)
     # template_directory = Path().cwd() / cookiecutter.template
     # load_template(template_directory, target_directory)
