@@ -9,7 +9,7 @@ from pathlib import Path
 MANUSCRIPT_FILENAME = "manuscript.tex"
 
 
-def copy_package_files(resource_dir: str, target_dir: Path):
+def copy_package_files(journal_template, target_dir):
     """
     Copies files from a package's resource directory to a target directory.
 
@@ -21,20 +21,20 @@ def copy_package_files(resource_dir: str, target_dir: Path):
       TheFilesystem path to copy files to.
     """
     repo = "https://github.com/scikit-package/scikit-package-manuscript.git"
-    target_dir = Path(target_dir)
+    target_dir\
+        = Path(target_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
 
     # Get the directory of resources
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         subprocess.run(["git", "clone", repo, str(tmp)], check=True)
-        resource_dir = tmp_path / "templates" / resource_dir
+        template_dir = tmp_path / "templates" / journal_template
 
         # Use as_file to ensure we get a real path (even if inside a zip)
-        with as_file(resource_dir) as root_path:
+        with as_file(template_dir) as root_path:
             if not root_path.is_dir():
-                raise NotADirectoryError(f"{resource_dir} is not a directory")
-
+                raise NotADirectoryError(f"{template_dir} is not a directory")
             for item in root_path.iterdir():
                 if item.is_file():
                     shutil.copy(item, target_dir / item.name)
@@ -158,8 +158,7 @@ def insert_blocks(target_file, package_blocks, command_blocks):
 def main():
     sys.path.append(str(Path().cwd().parent))
     target_directory = Path().cwd()
-    copy_package_files("scikit-package-manuscript.templates",
-                       "{{ cookiecutter.template }}", target_directory)
+    copy_package_files("{{ cookiecutter.journal_template }}", target_directory)
     clone_headers(target_directory)
     # template_directory = Path().cwd() / cookiecutter.template
     # load_template(template_directory, target_directory)
