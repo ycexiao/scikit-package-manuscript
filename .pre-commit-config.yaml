@@ -2,6 +2,14 @@ default_language_version:
     python: python3
 repos:
   - repo: https://github.com/kynan/nbstripout
-    rev: 0.6.1
+    rev: 0.8.1
     hooks:
       - id: nbstripout
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0      
+    hooks:
+      - id: no-commit-to-branch
+        name: Prevent Commit to Main Branch
+        args: ["--branch", "main"]
+        stages: [pre-commit]
+      - id: check-added-large-files
