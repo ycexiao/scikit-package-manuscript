@@ -28,7 +28,7 @@ repos:
     rev: 24.4.2
     hooks:
       - id: black
-        exclude: '^({{ cookiecutter.github_repo_name }}/.*\.py|hooks/post_gen_project\.py)$' # {{ cookiecutter.github_repo_name }} contains jinja variables in .py, hook fails. hooks/post_gen_project.py contains jinja variables of # (c) {% now 'utc', '%Y' %} which is not a valid black format
+        exclude: '^({{ cookiecutter.project_name }}/.*\.py|hooks/post_gen_project\.py)$' # {{ cookiecutter.project_name }} contains jinja variables in .py, hook fails. hooks/post_gen_project.py contains jinja variables of # (c) {% now 'utc', '%Y' %} which is not a valid black format
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:

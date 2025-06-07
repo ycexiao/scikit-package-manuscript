@@ -46,7 +46,7 @@ repos:
           - tomli
         args:
           [
-            "--skip=*.bst,*.cls,.codespell/ignore_words.txt,{{cookiecutter.project_slug}}/.codespell/ignore_words.txt",
+            "--skip=*.bst,*.cls,.codespell/ignore_words.txt,{{cookiecutter.project_name}}/.codespell/ignore_words.txt",
           ]
   # prettier - multi formatter for .json, .yml, and .md files
   - repo: https://github.com/pre-commit/mirrors-prettier

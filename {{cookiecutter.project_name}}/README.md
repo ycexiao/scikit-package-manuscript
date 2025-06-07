@@ -10,6 +10,6 @@ from https://github.com/Billingegroup/latex-headers.
 ## Bibliography Setup
 
 Please export the most up-to-date .bib files from Zotero:
-`bg-pdf-standards.bib`, `billinge-group-bib.bib`, and `{{cookiecutter.project_slug}}.bib`.
+`bg-pdf-standards.bib`, `billinge-group-bib.bib`, and `{{cookiecutter.project_name}}.bib`.
 `hand-coded.bib` is fore manually added entries.
 The .bib files here are currently empty.
