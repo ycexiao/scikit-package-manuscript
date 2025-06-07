@@ -2,38 +2,6 @@
 % Template file for the basic latex article classs
 \documentclass{article}
 
-% Start of inserted headers
-\usepackage{amsfonts}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{bm}
-\usepackage{comment}
-\usepackage[dvips]{epsfig}
-\usepackage{epstopdf}
-\usepackage{graphicx}% Include figure files
-\usepackage[utf8]{inputenc}
-\usepackage{mathtools}
-\usepackage{subfiles}
-\usepackage[usenames,dvipsnames]{xcolor}
-\newcommand{\aasquared}{\AA\ensuremath{^{2}}\xspace}
-\newcommand{\adhoc}{\emph{ad hoc}\xspace}
-\newcommand{\checkme}{\textcolor{orange}{{\large{$\blacktriangleleft$}}}}
-\newcommand{\doing}{\textcolor{blue}{{\large{$\blacklozenge$}}}}
-\newcommand{\done}{\textcolor{dgreen}{{\large{$\checkmark$}}}}
-\newcommand{\etal}{\emph{et al.}\xspace}
-\newcommand{\fixme}{\textcolor{red}{{\large{$\blacktriangleright$}}}}
-\newcommand{\iaa}{\AA\ensuremath{^{-1}}\xspace}
-\newcommand{\iaasquared}{\AA\ensuremath{^{-2}}\xspace}
-\newcommand{\insitu}{\emph{in situ}\xspace}
-\newcommand{\operando}{\emph{operando}\xspace}
-\newcommand{\sjb}[1]{\textcolor{blue}{[sjb:#1]}}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{dgreen}{HTML}{008000}
-\graphicspath{ {./figures/} }
-% End of inserted headers
 \title{A Small \LaTeX{} Article Template\thanks{To your mother}}
 \author{Your Name  \\
 	Your Company / University  \\
@@ -97,10 +65,8 @@ described in Section \ref{documentclasses}. Finally, Section
 \section{Conclusions}\label{conclusions}
 There is no longer \LaTeX{} example which was written by \cite{doe}.
 
+\bibliography{{{ cookiecutter.project_slug }}.bib,user-default.bib}
+\bibliographystyle{iucr}
 
-\begin{thebibliography}{9}
-\bibitem[Doe]{doe} \emph{First and last \LaTeX{} example.},
-John Doe 50 B.C. 
-\end{thebibliography}
 
 \end{document}
