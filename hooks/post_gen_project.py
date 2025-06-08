@@ -32,8 +32,8 @@ def copy_journal_template_files(journal_template, project_dir):
     template_dir = cookiecutter_path / "templates" / journal_template
     if not template_dir.exists():
         raise NotADirectoryError(f"Cannot find the provided journal_tamplate: "
-                                 f"{journal_template}. Please contact the "
-                                 f"software developers")
+                                 f"{journal_template} in {template_dir}. "
+                                 f"Please contact the software developers")
     for item in template_dir.iterdir():
         dest = project_dir / item.name
         if item.is_dir():
