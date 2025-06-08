@@ -1,4 +1,3 @@
-import json
 import shutil
 import subprocess
 import tempfile
@@ -7,7 +6,15 @@ from pathlib import Path
 MANUSCRIPT_FILENAME = "manuscript.tex"
 
 
-def copy_journal_template_files(journal_template, project_dir):
+def get_repo_dir(project_name):
+    cookiecutters_dir = Path.home() / ".cookiecutters"
+    for candidate in cookiecutters_dir.iterdir():
+        if candidate.is_dir() and project_name in candidate.name:
+            return candidate.resolve()
+    return Path("[unknown]")  # fallback
+
+
+def copy_journal_template_files(journal_template, project_dir, project_name):
     """
     Copies files from a package's resource directory to a target directory.
 
@@ -20,15 +27,7 @@ def copy_journal_template_files(journal_template, project_dir):
       The path to the location of the output project where the files
       will be copied to.
     """
-    context_file = project_dir / "cookiecutter.json"
-    if context_file.exists():
-        with context_file.open("r", encoding="utf-8") as f:
-            context = json.load(f)
-        cookiecutter_path = Path(context.get("_repo_dir", "unknown")).resolve()
-    else:
-        print("cookiecutter.json not found in output directory.")
-
-    # Get the directory of resources
+    cookiecutter_path = get_repo_dir(project_name)
     template_dir = cookiecutter_path / "templates" / journal_template
     if not template_dir.exists():
         raise NotADirectoryError(f"Cannot find the provided journal_tamplate: "
@@ -108,7 +107,8 @@ def main():
     else:
         user_headers_repo_url = "{{ cookiecutter.latex_headers_repo_url }}"
     copy_journal_template_files(
-        "{{ cookiecutter.journal_template }}", project_dir
+        "{{ cookiecutter.journal_template }}", project_dir,
+        "{{ cookiecutter.project_name }}"
     )
     user_headers = get_user_headers(user_headers_repo_url)
     manuscript_packages = extract_manuscript_packages(manuscript_path)
