@@ -15,7 +15,7 @@ def get_repo_dir():
                 "scikit-package-manuscript" in candidate.name):
             return candidate.resolve()
     return Path(f"couldn't find scikit-package-manuscript, but did "
-                f"find {*candidates, }")  # fallback
+                f"find {*candidates,}")  # noqa E231
 
 
 def copy_journal_template_files(journal_template, project_dir):
