@@ -101,12 +101,16 @@ def recompose_manuscript(manuscript_path, user_packages, user_commands):
 def main():
     project_dir = Path().cwd()
     manuscript_path = project_dir / MANUSCRIPT_FILENAME
+    if ("{{ cookiecutter.latex_headers_repo_url }}" ==
+            "use-scikit-package-default"):
+        user_headers_repo_url = \
+            "https://github.com/scikit-package/default-latex-headers.git"
+    else:
+        user_headers_repo_url = "{{ cookiecutter.latex_headers_repo_url }}"
     copy_journal_template_files(
         "{{ cookiecutter.journal_template }}", project_dir
     )
-    user_headers = get_user_headers(
-        "{{ cookiecutter.latex_headers_repo }}"
-    )
+    user_headers = get_user_headers(user_headers_repo_url)
     manuscript_packages = extract_manuscript_packages(manuscript_path)
     user_packages, the_rest = split_usepackage_lines(user_headers)
     all_packages = "/n".join([manuscript_packages, user_packages])
