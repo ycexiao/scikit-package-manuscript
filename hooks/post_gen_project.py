@@ -1,47 +1,46 @@
+import json
 import re
 import shutil
 import subprocess
-import sys
 import tempfile
-from importlib.resources import as_file
 from pathlib import Path
 
 MANUSCRIPT_FILENAME = "manuscript.tex"
 
 
-def copy_package_files(journal_template, target_dir):
+def copy_package_files(journal_template, project_dir):
     """
     Copies files from a package's resource directory to a target directory.
 
     Parameters:
     ===========
-    resource_dir : str
-      The subdirectory inside the package (relative to package root).
-    target_dir : Path
-      TheFilesystem path to copy files to.
+    journal_template : str
+      The name of the journal latex template to use. It must be
+      one of the available templates.
+    project_dir : Path
+      The path to the location of the output project where the files
+      will be copied to.
     """
-    repo = "https://github.com/scikit-package/scikit-package-manuscript.git"
-    cookiecutter_path = Path(__file__).parent
-    target_dir\
-        = Path(target_dir)
-    target_dir.mkdir(parents=True, exist_ok=True)
+    context_file = project_dir / "cookiecutter.json"
+    if context_file.exists():
+        with context_file.open("r", encoding="utf-8") as f:
+            context = json.load(f)
+        cookiecutter_path = Path(context.get("_repo_dir", "unknown")).resolve()
+    else:
+        print("cookiecutter.json not found in output directory.")
 
     # Get the directory of resources
     template_dir = cookiecutter_path / "templates" / journal_template
-    print(template_dir)
-    # with tempfile.TemporaryDirectory() as tmp:
-    #     tmp_path = Path(tmp)
-    #     subprocess.run(["git", "clone", repo, str(tmp)], check=True)
-    #     template_dir = tmp_path / "templates" / journal_template
-    #
-    #
-    #     # Use as_file to ensure we get a real path (even if inside a zip)
-    #     with as_file(template_dir) as root_path:
-    #         if not root_path.is_dir():
-    #             raise NotADirectoryError(f"{template_dir} is not a directory")
-    #         for item in root_path.iterdir():
-    #             if item.is_file():
-    #                 shutil.copy(item, target_dir / item.name)
+    if not template_dir.exists():
+        raise NotADirectoryError(f"Cannot find the provided journal_tamplate: "
+                                 f"{journal_template}. Please contact the "
+                                 f"software developers")
+    for item in template_dir.iterdir():
+        dest = project_dir / item.name
+        if item.is_dir():
+            shutil.copytree(item, dest, dirs_exist_ok=True)
+        else:
+            shutil.copy2(item, dest)
 
 
 def clone_headers(repo_url):
@@ -160,10 +159,10 @@ def insert_blocks(target_file, package_blocks, command_blocks):
 
 
 def main():
-    sys.path.append(str(Path().cwd().parent))
-    target_directory = Path().cwd()
-    copy_package_files("{{ cookiecutter.journal_template }}", target_directory)
-    clone_headers(target_directory)
+    # sys.path.append(str(Path().cwd().parent))
+    project_dir = Path().cwd()
+    copy_package_files("{{ cookiecutter.journal_template }}", project_dir)
+    clone_headers("{{ cookiecutter.latex_headers_repo }}")
     # template_directory = Path().cwd() / cookiecutter.template
     # load_template(template_directory, target_directory)
 

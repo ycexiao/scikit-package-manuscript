@@ -1,0 +1,6 @@
+{
+  "project_name": "{{ cookiecutter.project_name }}",
+  "journal_template": "{{ cookiecutter.journal_template }}",
+  "latex_headers_repo": "{{ cookiecutter.latex_headers_repo }}",
+  "_repo_dir": "{{ cookiecutter._template }}"
+}
