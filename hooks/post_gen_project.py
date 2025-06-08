@@ -116,7 +116,7 @@ def main():
     user_headers = get_user_headers(user_headers_repo_url)
     manuscript_packages = extract_manuscript_packages(manuscript_path)
     user_packages, the_rest = split_usepackage_lines(user_headers)
-    all_packages = "/n".join([manuscript_packages, user_packages])
+    all_packages = "\n".join([manuscript_packages, user_packages])
     recompose_manuscript(manuscript_path, all_packages, the_rest)
 
 
