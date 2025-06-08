@@ -21,23 +21,27 @@ def copy_package_files(journal_template, target_dir):
       TheFilesystem path to copy files to.
     """
     repo = "https://github.com/scikit-package/scikit-package-manuscript.git"
+    cookiecutter_path = Path(__file__).parent
     target_dir\
         = Path(target_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
 
     # Get the directory of resources
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp_path = Path(tmp)
-        subprocess.run(["git", "clone", repo, str(tmp)], check=True)
-        template_dir = tmp_path / "templates" / journal_template
-
-        # Use as_file to ensure we get a real path (even if inside a zip)
-        with as_file(template_dir) as root_path:
-            if not root_path.is_dir():
-                raise NotADirectoryError(f"{template_dir} is not a directory")
-            for item in root_path.iterdir():
-                if item.is_file():
-                    shutil.copy(item, target_dir / item.name)
+    template_dir = cookiecutter_path / "templates" / journal_template
+    print(template_dir)
+    # with tempfile.TemporaryDirectory() as tmp:
+    #     tmp_path = Path(tmp)
+    #     subprocess.run(["git", "clone", repo, str(tmp)], check=True)
+    #     template_dir = tmp_path / "templates" / journal_template
+    #
+    #
+    #     # Use as_file to ensure we get a real path (even if inside a zip)
+    #     with as_file(template_dir) as root_path:
+    #         if not root_path.is_dir():
+    #             raise NotADirectoryError(f"{template_dir} is not a directory")
+    #         for item in root_path.iterdir():
+    #             if item.is_file():
+    #                 shutil.copy(item, target_dir / item.name)
 
 
 def clone_headers(repo_url):
