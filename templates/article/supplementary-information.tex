@@ -1,0 +1,26 @@
+%------------------------------------------------------------------------------
+% Template file for the basic latex article class
+\documentclass{article}
+
+\title{Supplementary Information for: Title}
+\author{Your Name  \\
+	Your Company / University  \\
+	\and
+	The Other Dude \\
+	His Company / University \\
+	}
+
+\date{\today}
+% Hint: \title{what ever}, \author{who care} and \date{when ever} could stand
+% before or after the \begin{document} command
+% BUT the \maketitle command MUST come AFTER the \begin{document} command!
+\begin{document}
+
+
+\section{Section Name}
+
+\bibliography{{{ cookiecutter.project_name }}.bib,notes.bib}
+\bibliographystyle{chicago}
+
+
+\end{document}
