@@ -14,7 +14,7 @@ def get_repo_dir():
         if (candidate.is_dir() and
                 "scikit-package-manuscript" in candidate.name):
             return candidate.resolve()
-    return Path(f"couldn't find scikit-package-manuscript, but did "
+    raise FileNotFoundError(f"couldn't find scikit-package-manuscript, but did "
                 f"find {*candidates,}")  # noqa E231
 
 
