@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
-from hooks.post_gen_project import get_repo_dir
+from hooks.post_gen_project import get_repo_dir  # noqa: E402
 
 
 def test_with_repo_get_repo_dir(monkeypatch, tmp_path):
@@ -30,6 +30,6 @@ def test_without_repo_get_repo_dir(monkeypatch, tmp_path):
         get_repo_dir()
         print(str(exc_info))
         assert (
-            str(exc_info) == f"couldn't find scikit-package-manuscript, but did "
-            f"find foo, bar"
+            str(exc_info) == "couldn't find scikit-package-manuscript,"
+            " but did find foo, bar"
         )

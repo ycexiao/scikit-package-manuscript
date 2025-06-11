@@ -14,8 +14,8 @@ def get_repo_dir():
         if (candidate.is_dir() and
                 "scikit-package-manuscript" in candidate.name):
             return candidate.resolve()
-    raise FileNotFoundError(f"couldn't find scikit-package-manuscript, but did "
-                f"find {*candidates,}")  # noqa E231
+    raise FileNotFoundError(f"couldn't find scikit-package-manuscript, but "
+                            f"did find {*candidates, }")
 
 
 def copy_journal_template_files(journal_template, project_dir):
