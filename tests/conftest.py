@@ -12,7 +12,6 @@ def user_filesystem(tmp_path):
     yield tmp_path, ck_path, cwd_dir
 
 
-
 @pytest.fixture
 def user_filesystem_with_repo(tmp_path):
     # create a filesystem with an empty ".cookiecutters" directory.
