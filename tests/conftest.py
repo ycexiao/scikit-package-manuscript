@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture
 def user_filesystem(tmp_path):
     # create a filesystem with all expected files.
@@ -16,6 +17,7 @@ def user_filesystem(tmp_path):
 
     yield tmp_path, cwd_dir
 
+
 @pytest.fixture
 def user_filesystem_without_repo(tmp_path):
     # Create a filesystem without the "scikit-package-manuscript" repo cloned.
@@ -26,6 +28,7 @@ def user_filesystem_without_repo(tmp_path):
     cwd_dir = tmp_path / "cwd_dir"
     cwd_dir.mkdir()
     yield tmp_path, cwd_dir
+
 
 @pytest.fixture
 def user_filesystem_without_template(tmp_path):
