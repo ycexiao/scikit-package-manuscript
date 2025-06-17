@@ -6,15 +6,15 @@ from pathlib import Path
 MANUSCRIPT_FILENAME = "manuscript.tex"
 
 
-def get_repo_dir():
+def get_cookiecutter_dir(cookiecutter_name="scikit-package-manuscript"):
     cookiecutters_dir = Path.home() / ".cookiecutters"
     candidates = []
     for candidate in cookiecutters_dir.iterdir():
         candidates.append(candidate)
         if (candidate.is_dir() and
-                "scikit-package-manuscript" in candidate.name):
+                cookiecutter_name in candidate.name):
             return candidate.resolve()
-    raise FileNotFoundError(f"Couldn't find scikit-package-manuscript, but "
+    raise FileNotFoundError(f"Couldn't find {cookiecutter_name}, but "
                             f"did find {*candidates, }")
 
 
@@ -31,7 +31,7 @@ def copy_journal_template_files(journal_template, project_dir):
       The path to the location of the output project where the files
       will be copied to.
     """
-    cookiecutter_path = get_repo_dir()
+    cookiecutter_path = get_cookiecutter_dir()
     template_dir = cookiecutter_path / "templates" / journal_template
     if not template_dir.exists():
         raise NotADirectoryError(f"Cannot find the provided journal_tamplate: "

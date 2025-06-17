@@ -1,114 +1,141 @@
 import os
 import sys
 from pathlib import Path
-
+import subprocess
+import shutil
 import pytest
 
+from conftest import HOME
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 from hooks.post_gen_project import (  # noqa: E402
     copy_journal_template_files,
-    get_repo_dir,
+    get_cookiecutter_dir,
 )
 
-@pytest.mark.parametrize("repos",[
-    # test get_repo_dir when "scikit-package-manuscript" repo exists.
-    # C1: with only "scikit-package-manuscript" repo
+@pytest.mark.parametrize("cookiecutters",[
+    # test get_cookiecutter_dir when "scikit-package-manuscript" cookiecutter exists.
+    # C1: with only "scikit-package-manuscript" cookiecutter.
     ("scikit-package-manuscript",),
-    # C2: with "scikit-package-manuscript" and other repos
-    ("scikit-package-manuscript", "foo", "bar"),
+    # C2: with "scikit-package-manuscript" and other cookiecutters.
+    ("scikit-package-manuscript", "foo", "bar")
 ]
 )
-def test_get_repo_dir(user_filesystem, repos):
-    home_path, ck_path, cwd_path = user_filesystem
-    skm_repo_path = home_path / ".cookiecutters" / "scikit-package-manuscript"
-    os.environ["HOME"] = str(home_path)
-    for repo in repos:
-        repo_path = ck_path / repo
-        repo_path.mkdir()
-    actual = get_repo_dir()
-    expected = skm_repo_path
+def test_get_cookiecutter_dir(user_filesystem, cookiecutters):
+    home_path = user_filesystem
+    skm_path = home_path / ".cookiecutters" / "scikit-package-manuscript"
+    for cookiecutter in cookiecutters:
+        cookiecutter_path = home_path/ ".cookiecutters" / cookiecutter
+        cookiecutter_path.mkdir()
+    actual = get_cookiecutter_dir(cookiecutter_name="scikit-package-manuscript")
+    expected = skm_path
     assert expected == actual
 
 
-@pytest.mark.parametrize("repos",[
-    # test get_repo_dir when "scikit-package-manuscript" repo does not exist.
-    # C1: empty ".cookiecutters"
+@pytest.mark.parametrize("cookiecutters",[
+    # test get_cookiecutter_dir when "scikit-package-manuscript" cookiecutter does not exist.
+    # C1: empty ".cookiecutters", expect FileNotFoundError.
     (),
-    # C2: without "scikit-package-manuscript"
+    # C2: without "scikit-package-manuscript", expect FileNotFoundError.
     ("foo", "bar"),
 ]
 )
-def test_get_repo_dir_bad(user_filesystem, repos):
-    home_path, ck_path, cwd_path = user_filesystem
-    os.environ["HOME"] = str(home_path)
-    for repo in repos:
-        repo_path = ck_path / repo
-        repo_path.mkdir()
+def test_get_cookiecutter_dir_bad(user_filesystem, cookiecutters):
+    home_path = user_filesystem
+    ck_path = home_path / ".cookiecutters"
+    for cookiecutter in cookiecutters:
+        cookiecutter_path = ck_path / cookiecutter
+        cookiecutter_path.mkdir()
     with pytest.raises(FileNotFoundError, match=r"Couldn't find scikit-package-manuscript,") as exc_info:
-        get_repo_dir()
+        get_cookiecutter_dir(cookiecutter_name="scikit-package-manuscript")
 
-@pytest.mark.parametrize("existing_templates, template",[
+@pytest.mark.parametrize("templates, expected_template",[
     # test if copy_journal_template_files can find the expected template.
-    # C1: with only one template
-    (["article"], "article"),
-    # C2: with multiple templates
+    # C1: with multiple templates.
     (["article", "foo", "bar"], "article")
 ]
 )
-def test_copy_journal_template_files_find_template(user_filesystem_with_repo, existing_templates, template):
-    home_path, skm_repo_path, cwd_path = user_filesystem_with_repo
-    os.environ["HOME"] = str(home_path)
-    for existing_template in existing_templates:
-        existing_template_path = skm_repo_path / "templates" / existing_template
-        existing_template_path.mkdir(parents=True, exist_ok=True)
+def test_copy_journal_template_files_find_template(user_filesystem, templates, expected_template):
+    home_path = user_filesystem
+    skm_path = home_path / ".cookiecutters" / "scikit-package-manuscript"
+    cwd_path = home_path / "cwd_dir"
+    for template in templates:
+        template_path = skm_path / "templates" / template
+        template_path.mkdir(parents=True, exist_ok=True)
     
-    cwd_path = copy_journal_template_files(template, cwd_path)
+    cwd_path = copy_journal_template_files(expected_template, cwd_path)
 
 
-@pytest.mark.parametrize("existing_templates, template",[
+@pytest.mark.parametrize("templates, expected_template",[
     # test copy_journal_template_files when template is not existed.
-    # C1: empty templates.
+    # C1: empty templates, expect NotADirectoryError.
     ([], "article"),
-    # C2: template does not exist.
+    # C2: template does not exist, expect NotADirectoryError.
     (["foo", "bar"], "article")
 ]
 )
-def test_copy_journal_template_files_find_template_bad(user_filesystem_with_repo, existing_templates, template):
-    home_path, skm_repo_path, cwd_path = user_filesystem_with_repo
-    os.environ["HOME"] = str(home_path)
-    for existing_template in existing_templates:
-        existing_template_path = skm_repo_path / "templates" / existing_template
-        existing_template_path.mkdir(parents=True, exist_ok=True)
+def test_copy_journal_template_files_find_template_bad(user_filesystem, templates, expected_template):
+    home_path = user_filesystem
+    skm_path = home_path / ".cookiecutters" / "scikit-package-manuscript"
+    skm_path.mkdir(parents=True, exist_ok=True)
+    cwd_path = home_path / "cwd_dir"
+    for template in templates:
+        template_path = skm_path / "templates" / template
+        template_path.mkdir(parents=True, exist_ok=True)
 
     with pytest.raises(NotADirectoryError, match=r"Cannot find the provided journal_tamplate: ") as exc_info:
-        cwd_path = copy_journal_template_files(template, cwd_path)
+        cwd_path = copy_journal_template_files(expected_template, cwd_path)
 
 
 @pytest.mark.parametrize("template_files",[
-    # test copy_journal_template_files with different directory structure.
-    # C1: empty template
+    # test copy_journal_template_files with different journal template structure.
+    # C1: empty template.
     (),
-    # C2: only one file in the template
+    # C2: only one file in the template.
     ("manuscript.tex"),
-    # C3: multiple files in the template
+    # C3: multiple files in the template.
     ("manuscript.tex","texstyle.cls","bibstyle.bst"),
-    # C4: subdirectory in the template
+    # C4: subdirectory in the template.
     ("manuscript.tex", "style/texstyle.cls", "style/bibstyle.bst")
 ])
-def test_copy_journal_template_files_copy_files(user_filesystem_with_repo, template_files):
-    home_path, skm_repo_path, cwd_path = user_filesystem_with_repo
-    os.environ["HOME"] = str(home_path)
-    template_path = skm_repo_path/ "templates" / "article"
+def test_copy_journal_template_files_copy_files(user_filesystem, template_files):
+    home_path = user_filesystem
+    template_path = home_path / ".cookiecutters" / "scikit-package-manuscript" / "templates" / "article"
     template_path.mkdir(parents=True, exist_ok=True)
+    cwd_path = home_path / "cwd_dir"
+
     for file in template_files:
         file_path = template_path / file
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.touch()
 
     project_path = cwd_path
-    project_path = copy_journal_template_files(template_path, project_path)
+    project_path = copy_journal_template_files("article", project_path)
 
     for file in template_files:
         file_path = project_path / file
         assert file_path.exists()
+
+
+@pytest.mark.parametrize("template",[
+    # test building the templates
+    # C1: article template
+    "article",
+])
+def test_build_manuscript( template, tmp_path, capsys):
+    # test building manuscript.
+    os.environ["HOME"]=HOME
+    if shutil.which("latex") is not None:
+        project_dir = tmp_path / "cwd_dir"
+        project_dir.mkdir(parents=True, exist_ok=True)
+        project_dir = copy_journal_template_files(template, project_dir)
+        manuscript_file = project_dir / "manuscript.tex"
+        result = subprocess.run(["latex", str(manuscript_file)])
+        if result.returncode != 0:
+            with capsys.disabled():
+                print(result.stdout)
+                print(result.stderr)
+            raise SyntaxError("Build failed")
+    else:
+        with capsys.disabled():
+            print("Skip test for building templates.")
 
