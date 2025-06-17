@@ -164,11 +164,17 @@ def test_build_manuscript(template, tmp_path, capsys):
     if shutil.which("latex") is not None:
         project_dir = tmp_path / "cwd_dir"
         project_dir.mkdir(parents=True, exist_ok=True)
-        auxiliary_output = project_dir/"output_dir"
+        auxiliary_output = project_dir / "output_dir"
         auxiliary_output.mkdir()
         project_dir = copy_journal_template_files(template, project_dir)
         manuscript_file = project_dir / "manuscript.tex"
-        result = subprocess.run(["latex", f"-output-directory={str(auxiliary_output)}", str(manuscript_file)])
+        result = subprocess.run(
+            [
+                "latex",
+                f"-output-directory={str(auxiliary_output)}",
+                str(manuscript_file),
+            ]
+        )
         if result.returncode != 0:
             with capsys.disabled():
                 print(result.stdout)
