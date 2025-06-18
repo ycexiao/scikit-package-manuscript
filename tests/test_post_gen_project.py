@@ -1,8 +1,10 @@
 import os
 import shutil
 import subprocess
+
 import pytest
 from conftest import HOME
+
 from hooks.post_gen_project import (  # noqa: E402
     copy_journal_template_files,
     get_cookiecutter_dir,
@@ -169,11 +171,14 @@ def test_build_manuscript(template, tmp_path, capsys):
             with capsys.disabled():
                 print(result.stdout)
                 print(result.stderr)
-            raise SyntaxError("Failed to build pdf from the templates: ",
-                              f"{template}. Please contact the software ",
-                              "developer"
-                              )
+            raise SyntaxError(
+                "Failed to build pdf from the templates: ",
+                f"{template}. Please contact the software ",
+                "developer",
+            )
     else:
         with capsys.disabled():
-            print("Not found latex. Skip test for building pdf from ",
-                  f"{template}.")
+            print(
+                "Not found latex. Skip test for building pdf from ",
+                f"{template}.",
+            )

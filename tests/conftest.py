@@ -1,7 +1,9 @@
 import os
-import pytest
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import pytest
+
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 HOME = os.environ["HOME"]
 
