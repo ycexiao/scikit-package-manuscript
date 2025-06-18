@@ -12,10 +12,11 @@ def get_cookiecutter_dir(cookiecutter_name="scikit-package-manuscript"):
     for candidate in cookiecutters_dir.iterdir():
         candidates.append(candidate)
         if (candidate.is_dir() and
-                cookiecutter_name in candidate.name):
+                cookiecutter_name == candidate.name):
             return candidate.resolve()
     raise FileNotFoundError(f"Couldn't find {cookiecutter_name}, but "
-                            f"did find {*candidates, }")
+                            f"did find {*candidates, }."
+                            f"Please contact the software developers")
 
 
 def copy_journal_template_files(journal_template, project_dir):
