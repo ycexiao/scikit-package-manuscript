@@ -25,8 +25,8 @@ def copy_journal_template_files(journal_template, project_dir):
     Parameters:
     ===========
     journal_template : str
-      The name of the journal latex template to use. It must be
-      one of the available templates.
+      The name of the journal latex template to use, e.g. 'article'.
+      It must be one of the available templates.
     project_dir : Path
       The path to the location of the output project where the files
       will be copied to.
