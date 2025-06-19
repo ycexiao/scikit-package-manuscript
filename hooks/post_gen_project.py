@@ -167,7 +167,7 @@ def insert_headers_from_repo(project_dir, manuscript_path, headers_repo_url):
     all_packages = "\n".join([manuscript_packages, user_packages])
     recompose_manuscript(manuscript_path, all_packages, the_rest)
 
-    
+
 def insert_bibliography_from_path(project_dir, manuscript_path, bib_path):
     bib_path_type = get_bib_path_type(bib_path)
     if bib_path_type == 'url':
@@ -192,7 +192,7 @@ def main():
     copy_journal_template_files(
         "{{ cookiecutter.journal_template }}", project_dir
     )
-    headers_repo_url = "{{ cookiecutter.latex_headers_repo_url }}" 
+    headers_repo_url = "{{ cookiecutter.latex_headers_repo_url }}"
     insert_headers_from_repo(project_dir, manuscript_path, headers_repo_url)
     bib_path = "{{ cookiecutter.latex_bibliography_path }}"
     insert_bibliography_from_path(project_dir, manuscript_path, bib_path)
