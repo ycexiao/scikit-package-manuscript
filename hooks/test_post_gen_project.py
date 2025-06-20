@@ -6,7 +6,9 @@ from post_gen_project import copy_journal_template_files
 
 # C1: multiple files in the template, expect all files will be copied
 #   to project_path
-def test_copy_journal_template_files(user_filesystem, template_files, mock_home):
+def test_copy_journal_template_files(
+    user_filesystem, template_files, mock_home
+):
     project_dir = Path(user_filesystem / "project-dir")
     project_dir.mkdir(parents=True, exist_ok=True)
     copy_journal_template_files("article", project_dir)
