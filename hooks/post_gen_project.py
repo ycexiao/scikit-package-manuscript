@@ -6,10 +6,11 @@ from pathlib import Path
 MANUSCRIPT_FILENAME = "manuscript.tex"
 
 
-def get_repo_dir():
-    cookiecutters_dir = Path.home() / ".cookiecutters"
+def get_scikit_manuscript_dir():
+    """return the full path to the local scikit-package-manuscript dir"""
+    cookiecutter_dir = Path.home() / ".cookiecutters"
     candidates = []
-    for candidate in cookiecutters_dir.iterdir():
+    for candidate in cookiecutter_dir.iterdir():
         candidates.append(candidate)
         if (candidate.is_dir() and
                 "scikit-package-manuscript" in candidate.name):
@@ -18,7 +19,7 @@ def get_repo_dir():
                 f"find {*candidates,}")  # noqa E231
 
 
-def copy_journal_template_files(journal_template, project_dir):
+def copy_journal_template_files(journal_template_name, project_dir):
     """
     Copies files from a package's resource directory to a target directory.
 
@@ -31,19 +32,25 @@ def copy_journal_template_files(journal_template, project_dir):
       The path to the location of the output project where the files
       will be copied to.
     """
-    cookiecutter_path = get_repo_dir()
-    template_dir = cookiecutter_path / "templates" / journal_template
+    cookiecutter_path = get_scikit_manuscript_dir()
+    template_dir = cookiecutter_path / "templates" / journal_template_name
+    print(template_dir)
     if not template_dir.exists():
-        raise NotADirectoryError(f"Cannot find the provided journal_tamplate: "
-                                 f"{journal_template} in {template_dir}. "
-                                 f"Please contact the software developers")
+        raise FileNotFoundError(f"Cannot find the provided journal_template: "
+                                f"{journal_template_name}. Please contact the "
+                                f"software developers.")
+
+    if not any(template_dir.iterdir()):
+        raise FileNotFoundError(f"Template {journal_template_name} found but "
+                                f"it contains no files. Please contact the "
+                                f"software developers.")
     for item in template_dir.iterdir():
         dest = project_dir / item.name
         if item.is_dir():
             shutil.copytree(item, dest, dirs_exist_ok=True)
         else:
             shutil.copy2(item, dest)
-    return project_dir
+    return
 
 
 def get_user_headers(repo_url):
