@@ -34,7 +34,6 @@ def copy_journal_template_files(journal_template_name, project_dir):
     """
     cookiecutter_path = get_scikit_manuscript_dir()
     template_dir = cookiecutter_path / "templates" / journal_template_name
-    print(template_dir)
     if not template_dir.exists():
         raise FileNotFoundError(f"Cannot find the provided journal_template: "
                                 f"{journal_template_name}. Please contact the "
