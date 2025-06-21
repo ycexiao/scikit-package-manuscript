@@ -7,7 +7,8 @@ MANUSCRIPT_FILENAME = "manuscript.tex"
 
 
 def get_scikit_manuscript_dir():
-    """return the full path to the local scikit-package-manuscript dir"""
+    """Return the full path to the local scikit-package-manuscript
+    dir."""
     cookiecutter_dir = Path.home() / ".cookiecutters"
     candidates = []
     for candidate in cookiecutter_dir.iterdir():
@@ -20,8 +21,8 @@ def get_scikit_manuscript_dir():
 
 
 def copy_journal_template_files(journal_template_name, project_dir):
-    """
-    Copies files from a package's resource directory to a target directory.
+    """Copies files from a package's resource directory to a target
+    directory.
 
     Parameters:
     ===========
@@ -54,9 +55,8 @@ def copy_journal_template_files(journal_template_name, project_dir):
 
 
 def get_user_headers(repo_url):
-    """
-    Clone a Git repository containing LaTeX header files into a string.
-    """
+    """Clone a Git repository containing LaTeX header files into a
+    string."""
     headers = ""
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
