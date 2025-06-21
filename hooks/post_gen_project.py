@@ -2,6 +2,7 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+
 import requests
 from jinja2 import Template
 
@@ -98,7 +99,8 @@ def split_keyword_lines(content, keyword=r"\usepackage"):
 def insert_keyword_lines(
     content, insert_text, location_keyword=r"\documentclass", method="below"
 ):
-    """Insert the lines below or above a certain location in the content."""
+    """Insert the lines below or above a certain location in the
+    content."""
     lines = content.splitlines()
     result_lines = []
     inserted = False

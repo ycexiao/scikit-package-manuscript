@@ -72,7 +72,7 @@ def user_filesystem(tmp_path):
         bib_file = bib_dir_path / filename
         bib_file.write_text(content)
         bib_files.append(bib_file)
-    
+
     a_bib_file = tmp_path / "a-bib-file.bib"
 
     yield tmp_path
