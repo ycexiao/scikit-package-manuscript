@@ -2,9 +2,8 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
-
+from urllib.parse import urlparse
 import requests
-from jinja2 import Template
 
 MANUSCRIPT_FILENAME = "manuscript.tex"
 
@@ -130,33 +129,34 @@ def recompose_manuscript(manuscript_path, user_packages, user_commands):
     )
 
 
+def is_url(bib_path):
+    try:
+        urlparse(bib_path)
+        return True
+    except AttributeError:
+        return False
+
+
 def get_bib_path_type(bib_path):
     if bib_path == "None":
-        return "none"
-    elif "github.com" in bib_path:
-        response = requests.get(bib_path)
-        if response.status_code != 200:
-            raise FileNotFoundError(
-                f"Cannot find Github repo {str(bib_path)}."
-                f" Please make sure the URL is correct."
-            )
+        return "None"
+    elif is_url(bib_path):
         return "url"
     else:
-        bib_path = Path(bib_path).expanduser()
-        if not bib_path.exists():
-            raise FileNotFoundError(
-                f"Cannot find {str(bib_path)}. "
-                "Please try again after running "
-                f"'touch {str(bib_path)}'."
-            )
         return "local"
 
 
-def copy_bib_from_url(bib_path, project_dir):
+def copy_bib_from_url(repo_url, project_dir):
+    response = requests.get(repo_url)
+    if response.status_code != 200:
+        raise FileNotFoundError(
+            f"Cannot find Github repo {str(repo_url)}."
+            f" Please make sure the URL is correct."
+        )
     bib_names = []
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
-        subprocess.run(["git", "clone", bib_path, str(tmp_path)], check=True)
+        subprocess.run(["git", "clone", repo_url, str(tmp_path)], check=True)
         for item in tmp_path.glob("**/*"):
             if item.is_file() and str(item).endswith(".bib"):
                 bib_names.append(item.name)
@@ -165,32 +165,33 @@ def copy_bib_from_url(bib_path, project_dir):
     if len(bib_names) == 0:
         raise FileNotFoundError(
             f"Cannot find bib files in "
-            f"{str(bib_path)}. Please contact "
+            f"{str(repo_url)}. Please contact "
             "the software developers"
         )
     return bib_names
 
 
 def copy_bib_from_local(bib_path, project_dir):
-    bib_names = []
     bib_path = Path(bib_path).expanduser()
+    if not bib_path.exists():
+        raise FileNotFoundError(
+            f"Cannot find {str(bib_path)}. "
+            "Please try again after running "
+            f"'touch {str(bib_path)}'."
+        )
+    bib_names = []
     if bib_path.is_dir():
         for item in bib_path.glob("**/*"):
-            if item.is_file() and str(item).endswith(".bib"):
-                bib_names.append(item.name)
+            if item.is_file():
                 dest = project_dir / item.name
                 shutil.copy2(item, dest)
+                if str(item).endswith(".bib"):
+                    bib_names.append(item.name)
     else:
+        dest = project_dir / bib_path.name
+        shutil.copy2(bib_path, dest)
         if bib_path.name.endswith(".bib"):
             bib_names.append(bib_path.name)
-            dest = project_dir / bib_path.name
-            shutil.copy2(bib_path, dest)
-    if len(bib_names) == 0:
-        raise FileNotFoundError(
-            f"Cannot find bib files in "
-            f"{str(bib_path)}. Please create "
-            f"bib files in {str(bib_path)}"
-        )
     return bib_names
 
 
@@ -209,21 +210,20 @@ def insert_headers_from_repo(project_dir, manuscript_path, headers_repo_url):
 
 
 def insert_bibliography_from_path(project_dir, manuscript_path, bib_path):
-    bib_path_type = get_bib_path_type(bib_path)
-    if bib_path_type == "url":
+    path_type = get_bib_path_type(bib_path)
+    if path_type == "None":
+        return 
+    elif path_type == "url":
         bib_names = copy_bib_from_url(bib_path, project_dir)
-    else:
+    elif path_type == "local":
         bib_names = copy_bib_from_local(bib_path, project_dir)
+
     insert_bibliography = r"\bibliography{" + ", ".join(bib_names) + r"}"
     manuscript_bibliography = extract_manuscript_keyword_lines(
         manuscript_path, keyword=r"\bibliography"
     )
     all_bibliography = "\n".join(
         [insert_bibliography, manuscript_bibliography]
-    )
-    project_name = "{{ cookiecutter.project_name }}"
-    all_bibliography = Template(all_bibliography).render(
-        project_name=project_name
     )
     manuscript_contents = manuscript_path.read_text(encoding="utf-8")
     manuscript_content_with_bibliography = insert_keyword_lines(

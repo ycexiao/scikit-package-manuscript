@@ -32,20 +32,6 @@ def mock_home(tmp_path):
 
 
 @pytest.fixture
-def mock_repo_exists():
-    with mock.patch("post_gen_project.requests.get") as mock_get:
-        mock_get.return_value.status_code = 200
-        yield mock_get
-
-
-@pytest.fixture
-def mock_repo_not_exists():
-    with mock.patch("post_gen_project.requests.get") as mock_get:
-        mock_get.return_value.status_code = 404
-        yield mock_get
-
-
-@pytest.fixture
 def user_filesystem(tmp_path):
     # create a filesystem with spm in a .cookiecutters directory and
     # template directories called article, other, and another
@@ -64,15 +50,17 @@ def user_filesystem(tmp_path):
         manuscript_path = article_path / key
         manuscript_path.write_text(value)
 
-    bib_dir_path = tmp_path / "bib-dir"
-    bib_dir_path.mkdir(parents=True, exist_ok=True)
-    Path(tmp_path / "other-bib-dir-path").mkdir(parents=True, exist_ok=True)
-    bib_files = []
-    for filename, content in BIB_FILES.items():
-        bib_file = bib_dir_path / filename
-        bib_file.write_text(content)
-        bib_files.append(bib_file)
+    project_dir = tmp_path / "project-dir"
+    project_dir.mkdir(parents=True, exist_ok=True)
 
-    a_bib_file = tmp_path / "a-bib-file.bib"
+    mix_bib_dir_path = tmp_path / "mix-bib-dir"
+    mix_bib_dir_path.mkdir(parents=True, exist_ok=True)
+    files = ["README.md", "example.tex"]
+    for file in files:
+        file_path = mix_bib_dir_path / file
+        file_path.touch()
+    for filename, content in BIB_FILES.items():
+        bib_file = mix_bib_dir_path / filename
+        bib_file.write_text(content)
 
     yield tmp_path
