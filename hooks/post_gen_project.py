@@ -3,6 +3,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 from urllib.parse import urlparse
+
 import requests
 
 MANUSCRIPT_FILENAME = "manuscript.tex"
@@ -212,7 +213,7 @@ def insert_headers_from_repo(project_dir, manuscript_path, headers_repo_url):
 def insert_bibliography_from_path(project_dir, manuscript_path, bib_path):
     path_type = get_bib_path_type(bib_path)
     if path_type == "None":
-        return 
+        return
     elif path_type == "url":
         bib_names = copy_bib_from_url(bib_path, project_dir)
     elif path_type == "local":

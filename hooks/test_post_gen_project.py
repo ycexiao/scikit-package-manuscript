@@ -1,10 +1,7 @@
 from pathlib import Path
 
 import pytest
-from post_gen_project import (
-    copy_bib_from_local,
-    copy_journal_template_files,
-)
+from post_gen_project import copy_bib_from_local, copy_journal_template_files
 
 
 # C1: multiple files in the template, expect all files will be copied
@@ -78,9 +75,8 @@ def test_copy_bib_from_local_bad(user_filesystem, mock_home):
     other_bib_path = user_filesystem / "other-bib-dir"
     with pytest.raises(
         FileNotFoundError,
-        match= 
-        f"Cannot find {str(other_bib_path)}. "
-         "Please try again after running " 
-        f"'touch {str(other_bib_path)}'."
+        match=f"Cannot find {str(other_bib_path)}. "
+        "Please try again after running "
+        f"'touch {str(other_bib_path)}'.",
     ):
         copy_bib_from_local(str(other_bib_path), project_dir)
