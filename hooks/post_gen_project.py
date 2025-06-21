@@ -3,6 +3,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 from urllib.parse import urlparse
+
 import requests
 
 MANUSCRIPT_FILENAME = "manuscript.tex"
@@ -158,15 +159,13 @@ def copy_bib_from_url(repo_url, project_dir):
         tmp_path = Path(tmp)
         subprocess.run(["git", "clone", repo_url, str(tmp_path)], check=True)
         for item in tmp_path.glob("**/*"):
-            if item.is_file() and str(item).endswith(".bib"):
-                bib_names.append(item.name)
+            if item.is_file():
                 dest = project_dir / item.name
                 shutil.copy2(item, dest)
-    if len(bib_names) == 0:
-        raise FileNotFoundError(
-            f"Cannot find bib files in "
-            f"{str(repo_url)}. Please contact "
-            "the software developers"
+                if str(item).endswith(".bib"):
+                    bib_names.append(item.name)
+    print(
+        f"{len(bib_names)} bib files are found in {str(repo_url)}."
         )
     return bib_names
 
@@ -192,6 +191,9 @@ def copy_bib_from_local(bib_path, project_dir):
         shutil.copy2(bib_path, dest)
         if bib_path.name.endswith(".bib"):
             bib_names.append(bib_path.name)
+    print(
+        f"{len(bib_names)} bib files are found in {str(bib_path)}."
+        )
     return bib_names
 
 
@@ -212,12 +214,11 @@ def insert_headers_from_repo(project_dir, manuscript_path, headers_repo_url):
 def insert_bibliography_from_path(project_dir, manuscript_path, bib_path):
     path_type = get_bib_path_type(bib_path)
     if path_type == "None":
-        return 
+        return
     elif path_type == "url":
         bib_names = copy_bib_from_url(bib_path, project_dir)
-    elif path_type == "local":
+    else:
         bib_names = copy_bib_from_local(bib_path, project_dir)
-
     insert_bibliography = r"\bibliography{" + ", ".join(bib_names) + r"}"
     manuscript_bibliography = extract_manuscript_keyword_lines(
         manuscript_path, keyword=r"\bibliography"
