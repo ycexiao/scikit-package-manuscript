@@ -2,8 +2,8 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
-
 import requests
+from jinja2 import Template
 
 MANUSCRIPT_FILENAME = "manuscript.tex"
 
@@ -218,6 +218,10 @@ def insert_bibliography_from_path(project_dir, manuscript_path, bib_path):
     )
     all_bibliography = "\n".join(
         [insert_bibliography, manuscript_bibliography]
+    )
+    project_name = "{{ cookiecutter.project_name }}"
+    all_bibliography = Template(all_bibliography).render(
+        project_name=project_name
     )
     manuscript_contents = manuscript_path.read_text(encoding="utf-8")
     manuscript_content_with_bibliography = insert_keyword_lines(
