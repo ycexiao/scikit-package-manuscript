@@ -11,7 +11,7 @@ TEMPLATE_FILES = {
 
 BIB_FILES = {
     "group.bib": "Contents of group.bib",
-    "project.bib": "Contents of project.bib"
+    "project.bib": "Contents of project.bib",
 }
 
 
@@ -19,20 +19,24 @@ BIB_FILES = {
 def template_files():
     yield TEMPLATE_FILES
 
+
 @pytest.fixture(scope="session")
 def bib_files():
     yield BIB_FILES
+
 
 @pytest.fixture
 def mock_home(tmp_path):
     with mock.patch.object(Path, "home", return_value=tmp_path):
         yield tmp_path
 
+
 @pytest.fixture
 def mock_repo_exists():
     with mock.patch("post_gen_project.requests.get") as mock_get:
         mock_get.return_value.status_code = 200
         yield mock_get
+
 
 @pytest.fixture
 def mock_repo_not_exists():
