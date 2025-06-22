@@ -48,3 +48,27 @@ def test_copy_journal_template_files_bad(
         match=errormessage,
     ):
         copy_journal_template_files(input, project_dir)
+
+
+# C1: a github repo url.
+#   Expect all files exist in the prject_dir ,contents are correct,
+#   print correct number of files.
+def test_copy_files_from_url():
+    pass
+
+
+# C1: a wrong github repo url. Expect FileNotFoundError.
+def test_copy_files_from_url_bad():
+    pass
+
+
+# C1: a local directory path.
+#   Expect all files exist in the prject_dir and contents are correct.
+#   print correct number of files.
+def test_copy_files_from_local():
+    pass
+
+
+# C1: a not existing local path. Expect FileNotFoundError.
+def test_copy_files_from_local_bad():
+    pass

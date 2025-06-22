@@ -1,7 +1,6 @@
 import shutil
-import subprocess
-import tempfile
 from pathlib import Path
+from typing import Literal
 
 MANUSCRIPT_FILENAME = "manuscript.tex"
 
@@ -12,11 +11,15 @@ def get_scikit_manuscript_dir():
     candidates = []
     for candidate in cookiecutter_dir.iterdir():
         candidates.append(candidate)
-        if (candidate.is_dir() and
-                "scikit-package-manuscript" in candidate.name):
+        if (
+            candidate.is_dir()
+            and "scikit-package-manuscript" in candidate.name
+        ):
             return candidate.resolve()
-    return Path(f"couldn't find scikit-package-manuscript, but did "
-                f"find {*candidates,}")  # noqa E231
+    return Path(
+        f"couldn't find scikit-package-manuscript, but did "
+        f"find {*candidates, }"
+    )  # noqa E231
 
 
 def copy_journal_template_files(journal_template_name, project_dir):
@@ -35,14 +38,18 @@ def copy_journal_template_files(journal_template_name, project_dir):
     cookiecutter_path = get_scikit_manuscript_dir()
     template_dir = cookiecutter_path / "templates" / journal_template_name
     if not template_dir.exists():
-        raise FileNotFoundError(f"Cannot find the provided journal_template: "
-                                f"{journal_template_name}. Please contact the "
-                                f"software developers.")
+        raise FileNotFoundError(
+            f"Cannot find the provided journal_template: "
+            f"{journal_template_name}. Please contact the "
+            f"software developers."
+        )
 
     if not any(template_dir.iterdir()):
-        raise FileNotFoundError(f"Template {journal_template_name} found but "
-                                f"it contains no files. Please contact the "
-                                f"software developers.")
+        raise FileNotFoundError(
+            f"Template {journal_template_name} found but "
+            f"it contains no files. Please contact the "
+            f"software developers."
+        )
     for item in template_dir.iterdir():
         dest = project_dir / item.name
         if item.is_dir():
@@ -52,78 +59,104 @@ def copy_journal_template_files(journal_template_name, project_dir):
     return
 
 
-def get_user_headers(repo_url):
-    """
-    Clone a Git repository containing LaTeX header files into a string.
-    """
-    headers = ""
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp_path = Path(tmp)
-        subprocess.run(["git", "clone", repo_url, str(tmp_path)], check=True)
-        for item in tmp_path.glob('**/*'):
-            if item.is_file() and str(item).endswith(".tex"):
-                headers += item.read_text()+'\n'
-    return headers
+def get_input_type(input: str) -> Literal["url", "local", "None"]:
+    input_type = "None"
+    return input_type
 
 
-def extract_manuscript_packages(manuscript_path):
-    contents = manuscript_path.read_text(encoding="utf-8")
-    packages, the_rest = split_usepackage_lines(contents)
-    Path(manuscript_path).write_text(the_rest, encoding="utf-8")
-    return packages
+def copy_files_from_url(repo_url: str, project_dir: Path) -> list[Path]:
+    # side effect: files are copied into project_dir
+    files = None
+    print(f"{len(files)} found in {repo_url}.")
+    return files
 
 
-def split_usepackage_lines(headers):
-    usepackage_lines = []
-    other_lines = []
-    for line in headers.splitlines():
-        if line.lstrip().startswith(r"\usepackage"):
-            usepackage_lines.append(line)
-        else:
-            other_lines.append(line)
-    return "\n".join(usepackage_lines), "\n".join(other_lines)
+def copy_files_from_local(local_path: str, project_dir: Path) -> list[Path]:
+    # side effect: files are copied into project_dir
+    files = None
+    print(f"{len(files)} found in {local_path}.")
+    return files
 
 
-def insert_below_documentclass(manuscript_text, insert_text):
-    lines = manuscript_text.splitlines()
-    result_lines = []
-    inserted = False
-    for line in lines:
-        result_lines.append(line)
-        if not inserted and r"\documentclass" in line:
-            result_lines.append(insert_text)
-            inserted = True
-    return "\n".join(result_lines)
+def extract_lines(content: str, keyword: str) -> tuple[str, str]:
+    lines = None
+    return lines, content
 
 
-def recompose_manuscript(manuscript_path, user_packages, user_commands):
-    new_header = "\n".join([user_packages, user_commands])
-    manuscript_contents = manuscript_path.read_text(encoding="utf-8")
-    manuscript_contents_with_header = insert_below_documentclass(
-        manuscript_contents, new_header
+def insert_lines(
+    content: str,
+    insert_text: str,
+    location_keyword: str,
+    method: Literal["below", "above"],
+) -> str:
+    update_contnet = None
+    return update_contnet
+
+
+def get_file_type(a_file: Path) -> Literal["header", "bib", "other"]:
+    file_type = "other"
+    return file_type
+
+
+def add_headers_to_manuscript(header_files: list[Path], manuscript_path: Path):
+    # side effect: 1. headers are inserted in to manuscript.
+    #   2. header files are deleted.
+    headers_content = "\n".join([file.read_text() for file in header_files])
+    package_lines, cmd_lines = extract_lines(headers_content, r"\usepackage")
+    manuscript_content = manuscript_path.read_text()
+    manuscript_package_lines, other_content = extract_lines(
+        manuscript_content, r"\usepacakge"
     )
-    manuscript_path.write_text(
-        manuscript_contents_with_header, encoding="utf-8"
+    headers_content = "\n".join(
+        [package_lines, manuscript_package_lines, cmd_lines]
     )
+    manuscript_with_headers = insert_lines(
+        other_content, headers_content, r"\begin{document}", "below"
+    )
+    manuscript_path.write_text(manuscript_with_headers)
+    for file in header_files:
+        file.unlink()
+
+
+def add_bibliography_to_manuscript(
+    bib_files: list[Path], manuscript_path: Path
+):
+    # side effect: 1. bib files name are added
+    bib = ",".join([file.stem for file in bib_files])
+    bib = r"\bibliography{" + bib + r"}"
+    manuscript_content = manuscript_path.read_text()
+    manuscript_bib, other_content = extract_lines(
+        manuscript_content, r"\bibliography"
+    )
+    bib_content = "\n".join([bib, manuscript_bib])
+    manuscript_with_bib = insert_lines(
+        other_content, bib_content, r"\end{document}", "above"
+    )
+    manuscript_path.write_text(manuscript_with_bib)
 
 
 def main():
     project_dir = Path().cwd()
     manuscript_path = project_dir / MANUSCRIPT_FILENAME
-    if ("{{ cookiecutter.latex_headers_repo_url }}" ==
-            "use-scikit-package-default"):
-        user_headers_repo_url = \
-            "https://github.com/scikit-package/default-latex-headers.git"
-    else:
-        user_headers_repo_url = "{{ cookiecutter.latex_headers_repo_url }}"
     copy_journal_template_files(
         "{{ cookiecutter.journal_template }}", project_dir
     )
-    user_headers = get_user_headers(user_headers_repo_url)
-    manuscript_packages = extract_manuscript_packages(manuscript_path)
-    user_packages, the_rest = split_usepackage_lines(user_headers)
-    all_packages = "\n".join([manuscript_packages, user_packages])
-    recompose_manuscript(manuscript_path, all_packages, the_rest)
+
+    external_latex_files_path = "{{ cookiecutter.external_latex_files_path }}"
+    input_type = get_input_type(external_latex_files_path)
+    if input_type == "url":
+        files = copy_files_from_url(external_latex_files_path)
+    elif input_type == "local":
+        files = copy_files_from_local(external_latex_files_path)
+    else:
+        return
+
+    header_files = [f for f in files if get_file_type(f) == "header"]
+    bib_files = [f for f in files if get_file_type(f) == "bib"]
+    add_headers_to_manuscript(header_files, manuscript_path)
+    print(f"{len(header_files)} header files Found.")
+    add_bibliography_to_manuscript(bib_files, manuscript_path)
+    print(f"{len(bib_files)} bib files Found.")
 
 
 if __name__ == "__main__":
