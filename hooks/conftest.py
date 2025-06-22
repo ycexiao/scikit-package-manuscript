@@ -9,10 +9,20 @@ TEMPLATE_FILES = {
     "my-bib.bib": "Contents of my-bib.bib",
 }
 
+BIB_FILES = {
+    "group.bib": "Contents of group.bib",
+    "project.bib": "Contents of project.bib",
+}
+
 
 @pytest.fixture(scope="session")
 def template_files():
     yield TEMPLATE_FILES
+
+
+@pytest.fixture(scope="session")
+def bib_files():
+    yield BIB_FILES
 
 
 @pytest.fixture
@@ -39,4 +49,18 @@ def user_filesystem(tmp_path):
     for key, value in TEMPLATE_FILES.items():
         manuscript_path = article_path / key
         manuscript_path.write_text(value)
+
+    project_dir = tmp_path / "project-dir"
+    project_dir.mkdir(parents=True, exist_ok=True)
+
+    mix_bib_dir_path = tmp_path / "mix-bib-dir"
+    mix_bib_dir_path.mkdir(parents=True, exist_ok=True)
+    files = ["README.md", "example.tex"]
+    for file in files:
+        file_path = mix_bib_dir_path / file
+        file_path.touch()
+    for filename, content in BIB_FILES.items():
+        bib_file = mix_bib_dir_path / filename
+        bib_file.write_text(content)
+
     yield tmp_path

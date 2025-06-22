@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from post_gen_project import copy_journal_template_files
+from post_gen_project import copy_bib_from_local, copy_journal_template_files
 
 
 # C1: multiple files in the template, expect all files will be copied
