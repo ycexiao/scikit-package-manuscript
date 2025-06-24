@@ -106,6 +106,74 @@ def recompose_manuscript(manuscript_path, user_packages, user_commands):
         manuscript_contents_with_header, encoding="utf-8"
     )
 
+def copy_all_files(source_dir, target_dir):
+    """Copies files from a package's resource directory to a target
+    directory.
+
+    Parameters:
+    ===========
+    source_dir : Path
+      The source dir from which all the files will be copied, recursively
+    project_dir : Path
+      The path to the location of the output project where the files
+      will be copied to.
+    """
+    # reuse the code in copy_journal_template_files and then delete that function
+    pass
+
+def clone_gh_repo(url):
+    """Clone the repo to a temporary location.
+
+    Parameters
+    ----------
+    url : a url
+
+    Returns
+    -------
+    The path to the contents of the repo on the local files-system
+    """
+    pass
+
+def load_headers(headers_path, manuscript_path):
+    """Loads usepackages.txt and newcommands.txt into manuscript.tex
+    header.
+
+    Updates manuscript.tex headers in place with the contents of the user-files.
+
+
+    Parameters
+    ----------
+    headers_path : Path
+      The path to the location of the usepackages.txt file
+    manuscript_path : Path
+      The path to the manuscript.tex file
+
+    Returns
+    -------
+    None
+    """
+    pass
+
+def load_bib_info(manuscript_path):
+    """Finds all bib files and loads the names into the \thebibliography
+    field.
+
+    Updates manuscript.tex bibliography in place with the name-list of all bib files
+
+    Parameters
+    ----------
+    manuscript_path : Path
+      The path to the manuscript.tex file
+
+    Returns
+    -------
+    None
+    """
+    pass
+
+def remove_temporary_files(tmpdir_path):
+    pass
+
 
 def main():
     project_dir = Path().cwd()
