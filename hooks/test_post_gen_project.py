@@ -50,13 +50,17 @@ def test_copy_journal_template_files_bad(
         copy_journal_template_files(input, project_dir)
 
 
-# C1: valid source dir and target dir.
+# C1: existing source dir and target dir.
 #  Expect all files in source dir are copied to target dir.
 def test_copy_all_files():
     pass
 
 
-# C1: invalid source dir and valid target dir.
-#  Expect FileNotFoundError
+# C1: an not existing source dir and an existing target dir.
+#  Expect FileNotFoundError.
+# C2: an empty source dir and an existing target dir.
+#  Expect FlileNotFoundError.
+# C3: existing source dir and target dir, but a file name exists in both dir.
+#  Expect NameError.
 def test_copy_all_files_bad():
     pass
