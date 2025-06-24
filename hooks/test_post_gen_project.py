@@ -48,3 +48,15 @@ def test_copy_journal_template_files_bad(
         match=errormessage,
     ):
         copy_journal_template_files(input, project_dir)
+
+
+# C1: valid source dir and target dir.
+#  Expect all files in source dir are copied to target dir.
+def test_copy_all_files():
+    pass
+
+
+# C1: invalid source dir and valid target dir.
+#  Expect FileNotFoundError
+def test_copy_all_files_bad():
+    pass
