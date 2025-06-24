@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+
 from hooks.post_gen_project import copy_journal_template_files
 
 
