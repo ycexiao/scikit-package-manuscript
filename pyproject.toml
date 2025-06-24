@@ -7,16 +7,13 @@ name = "scikit-package-manuscript"
 dynamic=['version', 'dependencies']
 authors = [
   { name="Simon J.L. Billinge", email="sb2896@columbia.edu" },
-  { name="Sangjoon Lee", email="bobleesj@gmail.com" },
-  { name="Andrew Yang", email="ay2546@columbia.edu" },
-  { name="Caden Myers", email="cjm2304@columbia.edu" },
-  { name="Tieqiong Zhang", email="tz2600@columbia.edu" },
+  { name="Yucheng Xiao" },
 ]
 maintainers = [
   { name="Simon J.L. Billinge", email="sb2896@columbia.edu" },
   { name="Sangjoon Lee", email="bobleesj@gmail.com" },
 ]
-description = "This is a Cookiecutter template for creating Overleaf LaTex paper repositories using Billinge group standards."
+description = "The cookiecutter for creating a new manuscript directory using scikit-package"
 keywords = ['Package template', 'open-source software']
 readme = "README.rst"
 requires-python = ">=3.11, <3.14"
@@ -48,17 +45,13 @@ dev_template = "{tag}"
 dirty_template = "{tag}"
 
 [tool.setuptools.packages.find]
-where = ["src"]  # list of folders that contain the packages (["."] by default)
+where = ["hooks"]  # list of folders that contain the packages (["."] by default)
 include = ["*"]  # package names should match these glob patterns (["*"] by default)
 exclude = []  # exclude packages matching these glob patterns (empty by default)
 namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements/pip.txt"]}
-
-[project.scripts]
-package = "scikit_package.app:main"
-
 [tool.codespell]
 exclude-file = ".codespell/ignore_lines.txt"
 ignore-words = ".codespell/ignore_words.txt"
@@ -85,13 +78,9 @@ exclude = '''
   | buck-out
   | build
   | dist
+
   # The following are specific to Black, you probably don't want those.
   | blib2to3
   | tests/data
 )/
 '''
-
-[tool.pytest.ini_options]
-addopts = [
-    "--ignore={{ cookiecutter.github_repo_name }}",
-]
