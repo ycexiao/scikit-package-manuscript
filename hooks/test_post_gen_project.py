@@ -1,50 +1,29 @@
-from pathlib import Path
-
 import pytest
-from post_gen_project import copy_journal_template_files
+from post_gen_project import copy_all_files
 
 
-# C1: multiple files in the template, expect all files will be copied
-#   to project_path
-def test_copy_journal_template_files(
-    user_filesystem, template_files, mock_home
-):
-    project_dir = Path(user_filesystem / "project-dir")
-    project_dir.mkdir(parents=True, exist_ok=True)
-    copy_journal_template_files("article", project_dir)
-    for key, value in template_files.items():
-        assert Path(project_dir / key).exists()
-        assert Path(project_dir / key).read_text() == value
+# C1: two valid directory path.
+#  Expect all files in the source dir are copied to the target dir.
+def test_copy_all_files(user_filesystem, repo_files):
+    soruce_dir = user_filesystem / "cloned-dir"
+    target_dir = user_filesystem / "project-dir"
+    copy_all_files(soruce_dir, target_dir)
+    for key, value in repo_files.items():
+        copied_path = target_dir / key
+        assert copied_path.exists()
+        assert copied_path.read_text() == value
 
 
-@pytest.mark.parametrize(
-    "input,errormessage",
-    [
-        # C1: template exists no files in the template. Expect
-        # FileNotFoundError
-        (
-            "other",
-            "Template other found but it contains no "
-            "files. Please contact the software "
-            "developers.",
-        ),
-        # C2: desired template does not exist. Expect FileNotFoundError
-        (
-            "yet-another",
-            "Cannot find the provided journal_template: "
-            "yet-another. Please contact the "
-            "software developers.",
-        ),
-    ],
-)
-def test_copy_journal_template_files_bad(
-    user_filesystem, mock_home, input, errormessage
-):
-    project_dir = Path(user_filesystem / "project-dir")
-    project_dir.mkdir(parents=True, exist_ok=True)
-
+# C1: source_dir is invalid.
+#  Expect FileNotFoundError.
+def test_copy_all_file_bad(user_filesystem):
+    source_dir = user_filesystem / "other-dir"
+    assert not source_dir.exists()
+    target_dir = user_filesystem / "project-dir"
     with pytest.raises(
         FileNotFoundError,
-        match=errormessage,
+        match=f"Cannot find the source directory: "
+        f"{str(source_dir)}. Please contact the "
+        f"software developers.",
     ):
-        copy_journal_template_files(input, project_dir)
+        copy_all_files(source_dir, target_dir)

@@ -14,43 +14,10 @@ def get_scikit_manuscript_dir():
     for candidate in cookiecutter_dir.iterdir():
         candidates.append(candidate)
         if (candidate.is_dir() and
-                "scikit-package-manuscript" in candidate.name):
+                "scikit-package-manuscript" == candidate.name):
             return candidate.resolve()
     return Path(f"couldn't find scikit-package-manuscript, but did "
                 f"find {*candidates,}")  # noqa E231
-
-
-def copy_journal_template_files(journal_template_name, project_dir):
-    """Copies files from a package's resource directory to a target
-    directory.
-
-    Parameters:
-    ===========
-    journal_template : str
-      The name of the journal latex template to use, e.g. 'article'.
-      It must be one of the available templates.
-    project_dir : Path
-      The path to the location of the output project where the files
-      will be copied to.
-    """
-    cookiecutter_path = get_scikit_manuscript_dir()
-    template_dir = cookiecutter_path / "templates" / journal_template_name
-    if not template_dir.exists():
-        raise FileNotFoundError(f"Cannot find the provided journal_template: "
-                                f"{journal_template_name}. Please contact the "
-                                f"software developers.")
-
-    if not any(template_dir.iterdir()):
-        raise FileNotFoundError(f"Template {journal_template_name} found but "
-                                f"it contains no files. Please contact the "
-                                f"software developers.")
-    for item in template_dir.iterdir():
-        dest = project_dir / item.name
-        if item.is_dir():
-            shutil.copytree(item, dest, dirs_exist_ok=True)
-        else:
-            shutil.copy2(item, dest)
-    return
 
 
 def get_user_headers(repo_url):
@@ -118,8 +85,20 @@ def copy_all_files(source_dir, target_dir):
       The path to the location of the output project where the files
       will be copied to.
     """
-    # reuse the code in copy_journal_template_files and then delete that function
-    pass
+    if not source_dir.exists():
+        raise FileNotFoundError(
+            f"Cannot find the source directory: "
+            f"{str(source_dir)}. Please contact the "
+            f"software developers."
+        )
+    for item in source_dir.iterdir():
+        dest = target_dir / item.name
+        if item.is_dir():
+            shutil.copytree(item, dest, dirs_exist_ok=True)
+        else:
+            shutil.copy2(item, dest)
+    return
+
 
 def clone_gh_repo(url):
     """Clone the repo to a temporary location.
@@ -184,9 +163,11 @@ def main():
             "https://github.com/scikit-package/default-latex-headers.git"
     else:
         user_headers_repo_url = "{{ cookiecutter.latex_headers_repo_url }}"
-    copy_journal_template_files(
-        "{{ cookiecutter.journal_template }}", project_dir
-    )
+
+    skm = get_scikit_manuscript_dir()
+    template_dir = skm / "templates" / "{{ cookiecutter.journal_template }}"
+    copy_all_files(template_dir, project_dir)
+
     user_headers = get_user_headers(user_headers_repo_url)
     manuscript_packages = extract_manuscript_packages(manuscript_path)
     user_packages, the_rest = split_usepackage_lines(user_headers)

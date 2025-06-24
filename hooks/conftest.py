@@ -6,13 +6,24 @@ import pytest
 TEMPLATE_FILES = {
     "manuscript.tex": "Contents of manuscript.tex",
     "article.cls": "Contents of article.cls",
-    "my-bib.bib": "Contents of my-bib.bib",
+}
+
+REPO_FILES = {
+    "package.txt": r"\usepackage{grapicx}",
+    "newcommands.txt": r"\renewcommand{\vec}[1]{\mathbf{#1}}",
+    "group-bib.bib": r"Contents of group-bib.bib",
+    "style.bst": r"Contents of style.bst",
 }
 
 
 @pytest.fixture(scope="session")
 def template_files():
     yield TEMPLATE_FILES
+
+
+@pytest.fixture(scope="session")
+def repo_files():
+    yield REPO_FILES
 
 
 @pytest.fixture
@@ -39,4 +50,14 @@ def user_filesystem(tmp_path):
     for key, value in TEMPLATE_FILES.items():
         manuscript_path = article_path / key
         manuscript_path.write_text(value)
+
+    project_dir = tmp_path / "project-dir"
+    project_dir.mkdir(parents=True, exist_ok=True)
+
+    cloned_dir = tmp_path / "cloned-dir"
+    cloned_dir.mkdir(parents=True, exist_ok=True)
+    for key, value in REPO_FILES.items():
+        copied_path = cloned_dir / key
+        copied_path.write_text(value)
+
     yield tmp_path
