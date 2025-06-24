@@ -48,3 +48,15 @@ def test_copy_journal_template_files_bad(
         match=errormessage,
     ):
         copy_journal_template_files(input, project_dir)
+
+
+# C1: an existing gh repo url.
+#   Expect return the cloned path.
+def test_clone_gh_repo():
+    pass
+
+
+# C1: an not existing gh repo url.
+#   Expect FileNotFoundError.
+def test_clone_gh_repo_bad():
+    pass
