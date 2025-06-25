@@ -4,6 +4,7 @@ import tempfile
 from pathlib import Path
 
 MANUSCRIPT_FILENAME = "manuscript.tex"
+TEMPOEARY_FILENAME = "_tmp"
 
 
 def get_scikit_manuscript_dir():
@@ -14,7 +15,7 @@ def get_scikit_manuscript_dir():
     for candidate in cookiecutter_dir.iterdir():
         candidates.append(candidate)
         if (candidate.is_dir() and
-                "scikit-package-manuscript" in candidate.name):
+                "scikit-package-manuscript" == candidate.name):
             return candidate.resolve()
     return Path(f"couldn't find scikit-package-manuscript, but did "
                 f"find {*candidates,}")  # noqa E231
@@ -118,8 +119,33 @@ def copy_all_files(source_dir, target_dir):
       The path to the location of the output project where the files
       will be copied to.
     """
-    # reuse the code in copy_journal_template_files and then delete that function
-    pass
+    if not source_dir.exists():
+        raise FileNotFoundError(
+            f"Cannot find the source directory: "
+            f"{str(source_dir)}. Please contact the "
+            f"software developers."
+        )
+
+    if not any(source_dir.iterdir()):
+        raise FileNotFoundError(
+            f"Source directory {str(source_dir)} found "
+            f"but it contains no file. Please contact the "
+            f"software developers."
+        )
+
+    for item in source_dir.iterdir():
+        dest = target_dir / item.name
+        if dest.exists():
+            raise NameError(
+                f"{str(dest)} already exists. Please "
+                f"remove it or the one in the Github repo."
+            )
+        if item.is_dir():
+            shutil.copytree(item, dest)
+        else:
+            shutil.copy2(item, dest)
+    return
+
 
 def clone_gh_repo(url):
     """Clone the repo to a temporary location.

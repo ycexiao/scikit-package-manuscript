@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from post_gen_project import copy_journal_template_files
+from post_gen_project import copy_all_files, copy_journal_template_files
 
 
 # C1: multiple files in the template, expect all files will be copied
@@ -52,8 +52,14 @@ def test_copy_journal_template_files_bad(
 
 # C1: existing source dir and target dir.
 #  Expect all files in source dir are copied to target dir.
-def test_copy_all_files():
-    pass
+def test_copy_all_files(user_filesystem, repo_files):
+    source_dir = user_filesystem / "source-dir"
+    target_dir = user_filesystem / "target-dir"
+    copy_all_files(source_dir, target_dir)
+    for key, value in repo_files.items():
+        file_path = target_dir / key
+        assert file_path.exists()
+        assert file_path.read_text() == value
 
 
 # C1: an not existing source dir and an existing target dir.
@@ -62,5 +68,33 @@ def test_copy_all_files():
 #  Expect FlileNotFoundError.
 # C3: existing source dir and target dir, but a file name exists in both dir.
 #  Expect NameError.
-def test_copy_all_files_bad():
-    pass
+def test_copy_all_files_bad(user_filesystem):
+    source_dir = user_filesystem / "other-dir"
+    assert not source_dir.exists()
+    target_dir = user_filesystem / "target-dir"
+    with pytest.raises(
+        FileNotFoundError,
+        match=f"Cannot find the source directory: "
+        f"{str(source_dir)}. Please contact the "
+        f"software developers.",
+    ):
+        copy_all_files(source_dir, target_dir)
+
+    empty_dir = user_filesystem / "empty-dir"
+    with pytest.raises(
+        FileNotFoundError,
+        match=f"Source directory {str(empty_dir)} found "
+        f"but it contains no file. Please contact the "
+        f"software developers.",
+    ):
+        copy_all_files(empty_dir, target_dir)
+
+    source_dir = user_filesystem / "source-dir"
+    dir_with_duplicated_file = user_filesystem / "duplicated-dir"
+    dest = dir_with_duplicated_file / "usepackage.txt"
+    with pytest.raises(
+        NameError,
+        match=f"{str(dest)} already exists. Please "
+        f"remove it or the one in the Github repo.",
+    ):
+        copy_all_files(source_dir, dir_with_duplicated_file)
