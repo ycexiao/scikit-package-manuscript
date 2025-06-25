@@ -4,7 +4,7 @@
 
 **Changed:**
 
-* No news added: Add CHANGELOG file to enable release.
+* <news item>
 
 **Deprecated:**
 
