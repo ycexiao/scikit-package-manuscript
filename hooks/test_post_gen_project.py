@@ -52,15 +52,12 @@ def test_copy_journal_template_files_bad(
 
 
 # C1: `usepackage.txt` and `newcommands.txt` exist in the headers_path,
-#   several usepackage lines in the manuscript.
+#   and there are several usepackage lines in the manuscript.
 #   Expect packages and commands are inserted into the manuscript in
 #   a order that packages come before commands.
+# C2: If only `usepackage.txt`is missed. Expect commands are inserted after
+#   manuscript's usepackages.
+# C3: If only `newcommands.txt`is missed. Expect packages are inserted before
+#   manuscript's usepackages.
 def test_load_headers():
-    assert False
-
-
-# C1: `usepackage.txt` doesn't exist. Expect FileNotFoundError.
-# C2: `newcommands.txt` doesn't exist. Expect FileNotFoundError.
-# C3: manuscript path doesn't exist. Expect FileNotFoundError.
-def test_load_headers_bad():
     assert False
