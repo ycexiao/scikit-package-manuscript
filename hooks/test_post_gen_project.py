@@ -55,9 +55,6 @@ def test_copy_journal_template_files_bad(
 #   several usepackage lines in the manuscript.
 #   Expect packages and commands are inserted into the manuscript in
 #   a order that packages come before commands.
-# C2: empty `usepackage.txt` and `newcommands.txt` exist in the headers_path,
-#   several usepackage lines in the manuscript.
-#   Expect the content of manuscript doesn't change.
 def test_load_headers():
     pass
 
