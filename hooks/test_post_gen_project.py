@@ -1,7 +1,8 @@
 from pathlib import Path
 
 import pytest
-from post_gen_project import copy_all_files, copy_journal_template_files
+from hooks.post_gen_project import copy_journal_template_files, copy_all_files
+
 
 
 # C1: multiple files in the template, expect all files will be copied
