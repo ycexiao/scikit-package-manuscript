@@ -53,11 +53,11 @@ def test_copy_journal_template_files_bad(
 
 # C1: existing source dir and target dir.
 #  Expect all files in source dir are copied to target dir.
-def test_copy_all_files(user_filesystem, repo_files):
+def test_copy_all_files(user_filesystem, user_repo_files_and_contents):
     source_dir = user_filesystem / "source-dir"
     target_dir = user_filesystem / "target-dir"
     copy_all_files(source_dir, target_dir)
-    for key, value in repo_files.items():
+    for key, value in user_repo_files_and_contents.items():
         file_path = target_dir / key
         assert file_path.exists()
         assert file_path.read_text() == value
@@ -85,7 +85,7 @@ def test_copy_all_files_bad(user_filesystem):
     with pytest.raises(
         FileNotFoundError,
         match=f"Source directory {str(empty_dir)} found "
-        f"but it contains no file. Please contact the "
+        f"but it contains no files. Please contact the "
         f"software developers.",
     ):
         copy_all_files(empty_dir, target_dir)
@@ -95,7 +95,10 @@ def test_copy_all_files_bad(user_filesystem):
     dest = dir_with_duplicated_file / "usepackage.txt"
     with pytest.raises(
         NameError,
-        match=f"{str(dest)} already exists. Please "
-        f"remove it or the one in the Github repo.",
+        match=f"{dest.name} already exists in "
+        "{str(dir_with_duplicated_file)}. Please either remove "
+        f"this from the user-defined GitHub repo, "
+        f"or contact the developers if you think the issue is with "
+        " scikit-package",
     ):
         copy_all_files(source_dir, dir_with_duplicated_file)

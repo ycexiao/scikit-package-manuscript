@@ -3,27 +3,25 @@ from unittest import mock
 
 import pytest
 
-TEMPLATE_FILES = {
-    "manuscript.tex": "Contents of manuscript.tex",
-    "article.cls": "Contents of article.cls",
-}
-
-REPO_FILES = {
-    "usepackage.txt": r"\usepackage{graphicx}",
-    "newcommands.txt": r"\renewcommand{\vec}[1]{\mathbf{#1}}",
-    "group-bib.bib": "Contents of group-bib.bib",
-    "other.tex": "Contents of other.tex",
-}
-
 
 @pytest.fixture(scope="session")
 def template_files():
-    yield TEMPLATE_FILES
+    skm_template_files = {
+        "manuscript.tex": "Contents of manuscript.tex",
+        "article.cls": "Contents of article.cls",
+    }
+    yield skm_template_files
 
 
 @pytest.fixture(scope="session")
-def repo_files():
-    yield REPO_FILES
+def user_repo_files_and_contents():
+    user_repo_files_and_contents = {
+        "usepackage.txt": r"\usepackage{graphicx}",
+        "newcommands.txt": r"\renewcommand{\vec}[1]{\mathbf{#1}}",
+        "group-bib.bib": "Contents of group-bib.bib",
+        "other.tex": "Contents of other.tex",
+    }
+    yield user_repo_files_and_contents
 
 
 @pytest.fixture
@@ -33,7 +31,7 @@ def mock_home(tmp_path):
 
 
 @pytest.fixture
-def user_filesystem(tmp_path):
+def user_filesystem(tmp_path, template_files, user_repo_files_and_contents):
     # create a filesystem with spm in a .cookiecutters directory and
     # template directories called article, other, and another
     # the article template contains a set of files defined in TEMPLATE_FILES
@@ -47,7 +45,7 @@ def user_filesystem(tmp_path):
 
     article_path = Path(spm_path / "templates" / "article")
     article_path.mkdir(parents=True, exist_ok=True)
-    for key, value in TEMPLATE_FILES.items():
+    for key, value in template_files.items():
         manuscript_path = article_path / key
         manuscript_path.write_text(value)
 
@@ -55,7 +53,7 @@ def user_filesystem(tmp_path):
     source_dir.mkdir()
     target_dir = tmp_path / "target-dir"
     target_dir.mkdir()
-    for key, value in REPO_FILES.items():
+    for key, value in user_repo_files_and_contents.items():
         file_path = source_dir / key
         file_path.write_text(value)
 

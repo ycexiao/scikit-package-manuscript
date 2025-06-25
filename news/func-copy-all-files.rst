@@ -1,6 +1,6 @@
 **Added:**
 
-* No news added: refactor the code
+* Add function `copy_all_files`
 
 **Changed:**
 

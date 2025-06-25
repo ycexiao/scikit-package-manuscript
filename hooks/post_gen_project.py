@@ -129,16 +129,18 @@ def copy_all_files(source_dir, target_dir):
     if not any(source_dir.iterdir()):
         raise FileNotFoundError(
             f"Source directory {str(source_dir)} found "
-            f"but it contains no file. Please contact the "
-            f"software developers."
+            f"but it contains no files. Please contact the "
+            f"software developers.",
         )
 
     for item in source_dir.iterdir():
         dest = target_dir / item.name
         if dest.exists():
             raise NameError(
-                f"{str(dest)} already exists. Please "
-                f"remove it or the one in the Github repo."
+                f"{dest.name} already exists in {str(target_dir)}. "
+                f"Please either remove this from the user-defined GitHub repo, "
+                f"or contact the developers if you think the issue is with "
+                " scikit-package",
             )
         if item.is_dir():
             shutil.copytree(item, dest)
