@@ -96,7 +96,7 @@ def test_copy_all_files_bad(user_filesystem):
     with pytest.raises(
         NameError,
         match=f"{dest.name} already exists in "
-        "{str(dir_with_duplicated_file)}. Please either remove "
+        f"{str(dir_with_duplicated_file)}. Please either remove "
         f"this from the user-defined GitHub repo, "
         f"or contact the developers if you think the issue is with "
         " scikit-package",
