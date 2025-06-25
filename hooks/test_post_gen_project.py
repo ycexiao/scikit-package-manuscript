@@ -56,11 +56,11 @@ def test_copy_journal_template_files_bad(
 #   Expect packages and commands are inserted into the manuscript in
 #   a order that packages come before commands.
 def test_load_headers():
-    pass
+    assert False
 
 
 # C1: `usepackage.txt` doesn't exist. Expect FileNotFoundError.
 # C2: `newcommands.txt` doesn't exist. Expect FileNotFoundError.
 # C3: manuscript path doesn't exist. Expect FileNotFoundError.
 def test_load_headers_bad():
-    pass
+    assert False
