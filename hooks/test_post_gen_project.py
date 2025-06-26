@@ -52,41 +52,48 @@ def test_copy_journal_template_files_bad(
 
 
 @pytest.mark.parametrize(
-    "missed_file_names, expect_headers",
+    "missing_files, expected_headers",
     [
-        # C1: `usepackage.txt` and `newcommands.txt` exist in the headers_path,
-        #   and there are several usepackage lines in the manuscript.
+        # C1: `usepackages.txt` and `newcommands.txt` exist in the
+        #   headers_path and there are several usepackages lines in the
+        #   manuscript.
         #   Expect packages and commands are inserted into the manuscript in
         #   a order that packages come before commands.
         (
             [],
             r"""
-    \usepackage{graphicx}
-    \usepackage{amsmath}
-    \renewcommand{\vec}[1]{\mathbf{#1}}
+    \usepackage{package-from-user-usepackage}
+    \usepackage{package-in-manuscript}
+    \newcommand{\command_from_user_newcommands}{}
 """,
         ),
-        # C2: Only `usepackage.txt`is missed. Expect commands are inserted
+        # C2: Only `usepackages.txt`is missing. Expect commands are inserted
         #   after manuscript's usepackages.
         (
-            ["usepackage.txt"],
+            ["usepackages.txt"],
             r"""
-    \usepackage{amsmath}
-    \renewcommand{\vec}[1]{\mathbf{#1}}
+    \usepackage{package-in-manuscript}
+    \newcommand{\command_from_user_newcommands}{}
 """,
         ),
-        # C3: Only `newcommands.txt`is missed. Expect packages are inserted
+        # C3: Only `newcommands.txt`is missing. Expect packages are inserted
         #   before manuscript's usepackages.
         (
             ["newcommands.txt"],
             r"""
-    \usepackage{graphicx}
-    \usepackage{amsmath}
+    \usepackage{package-from-user-usepackage}
+    \usepackage{package-in-manuscript}
 """,
         ),
     ],
 )
-def test_load_headers(user_filesystem, missed_file_names, expect_headers):
+def test_load_headers(
+    user_filesystem,
+    missing_files,
+    expected_headers,
+    template_files,
+    user_repo_files_and_contents,
+):
     source_dir = user_filesystem / "source-dir"
     manuscript_path = (
         user_filesystem
@@ -94,16 +101,24 @@ def test_load_headers(user_filesystem, missed_file_names, expect_headers):
         / "scikit-package-manuscript"
         / "templates"
         / "article"
-        / "manuscript.tex"
+        / "package-existing-in-manuscript.tex"
     )
-    for file in missed_file_names:
+    for file in missing_files:
         Path(source_dir / file).unlink()
-    load_headers(source_dir, manuscript_path)
-    manuscript_lines = manuscript_path.read_text().splitlines()
-    actual_headers = ""
-    for line in manuscript_lines[1:]:
-        if line.startswith(r"\begin{document}"):
-            break
+
+    for key, _ in user_repo_files_and_contents.items():
+        if key not in missing_files:
+            assert Path(source_dir / key).exists()
         else:
-            actual_headers += line
-    assert expect_headers == actual_headers
+            assert not Path(source_dir / key).exists()
+
+    load_headers(source_dir, manuscript_path)
+    actual_manuscript_content = manuscript_path.read_text()
+    template_manuscript_content = template_files[
+        "package-existing-in-manuscript.tex"
+    ]
+    expected_manuscript_content = template_manuscript_content.replace(
+        r" \usepackage{package-in-manuscript}", expected_headers
+    )
+
+    assert expected_manuscript_content == actual_manuscript_content

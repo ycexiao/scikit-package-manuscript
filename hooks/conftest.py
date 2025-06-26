@@ -8,12 +8,12 @@ import pytest
 def template_files():
     skm_template_files = {
         "article.cls": r"Contents of article.cls",
-        "manuscript.tex": r"""
+        "package-existing-in-manuscript.tex": r"""
     \documentclass{article}
-    \usepackage{amsmath}
+    \usepackage{package-in-manuscript}
     \begin{document}
-    Hello world.
-    \bibliography{note}
+    Contents of manuscript
+    \bibliography{bib-in-manuscript}
     \bibliographystyle{chicago}
     \end{document}
     }
@@ -25,11 +25,13 @@ def template_files():
 @pytest.fixture(scope="session")
 def user_repo_files_and_contents():
     user_repo_files_and_contents = {
-        "usepackage.txt": r"\usepackage{graphicx}",
-        "newcommands.txt": r"\renewcommand{\vec}[1]{\mathbf{#1}}",
+        "usepackages.txt": r"\usepackage{package-from-user-usepackage}",
+        "newcommands.txt": r"\newcommand{\command_from_user_newcommands}{}",
         "project.bib": "Contents of project.bib",
         "group.bib": "Contents of group.bib",
-        "other.tex": "Contents of other.tex",
+        "user-supplied-non-bib-file.tex": (
+            "Contents of user-supplied-non-bib-file.tex"
+        ),
     }
     yield user_repo_files_and_contents
 
