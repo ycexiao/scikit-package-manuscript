@@ -16,7 +16,7 @@ def get_scikit_manuscript_dir():
         if (candidate.is_dir() and
                 "scikit-package-manuscript" == candidate.name):
             return candidate.resolve()
-    return Path(f"couldn't find scikit-package-manuscript, but did "
+    return Path("couldn't find scikit-package-manuscript, but did "
                 f"find {*candidates,}")  # noqa E231
 
 
@@ -36,14 +36,14 @@ def copy_journal_template_files(journal_template_name, project_dir):
     cookiecutter_path = get_scikit_manuscript_dir()
     template_dir = cookiecutter_path / "templates" / journal_template_name
     if not template_dir.exists():
-        raise FileNotFoundError(f"Unable to find the provided journal_template: "
+        raise FileNotFoundError("Unable to find the provided journal_template: "
                                 f"{journal_template_name}. Please leave an issue "
-                                f"on GitHub.")
+                                "on GitHub.")
 
     if not any(template_dir.iterdir()):
         raise FileNotFoundError(f"Template {journal_template_name} found but "
-                                f"it contains no files. Please leave an issue "
-                                f"on GitHub.")
+                                "it contains no files. Please leave an issue "
+                                "on GitHub.")
     for item in template_dir.iterdir():
         dest = project_dir / item.name
         if item.is_dir():
@@ -120,16 +120,16 @@ def copy_all_files(source_dir, target_dir):
     """
     if not source_dir.exists():
         raise FileNotFoundError(
-            f"Unable to find the source directory: "
+            "Unable to find the source directory: "
             f"{str(source_dir)}. Please leave an issue "
-            f"on GitHub."
+            "on GitHub."
         )
 
     if not any(source_dir.iterdir()):
         raise FileNotFoundError(
             f"Source directory {str(source_dir)} found "
-            f"but it contains no files. Please leave an issue "
-            f"on GitHub.",
+            "but it contains no files. Please leave an issue "
+            "on GitHub.",
         )
 
     for item in source_dir.iterdir():
@@ -137,12 +137,12 @@ def copy_all_files(source_dir, target_dir):
         if dest.exists():
             raise NameError(
                 f"{dest.name} already exists in {str(target_dir)}. "
-                f"Please either remove this from the user-defined GitHub repo, "
-                f"or leave an issue on GitHub if you think the problem is with "
-                f"scikit-package.",
+                "Please either remove this from the user-defined GitHub repo, "
+                "or leave an issue on GitHub if you think the problem is with "
+                "scikit-package.",
             )
         if item.is_dir():
-            shutil.copytree(item, dest)
+            shutil.copytree(item, dest, dirs_exist_ok=False)
         else:
             shutil.copy2(item, dest)
     return

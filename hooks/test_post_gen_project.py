@@ -73,9 +73,9 @@ def test_copy_all_files_bad(user_filesystem):
     target_dir = user_filesystem / "target-dir"
     with pytest.raises(
         FileNotFoundError,
-        match=f"Unable to find the source directory: "
+        match="Unable to find the source directory: "
         f"{str(source_dir)}. Please leave an issue "
-        f"on GitHub.",
+        "on GitHub.",
     ):
         copy_all_files(source_dir, target_dir)
 
@@ -83,20 +83,21 @@ def test_copy_all_files_bad(user_filesystem):
     with pytest.raises(
         FileNotFoundError,
         match=f"Source directory {str(empty_dir)} found "
-        f"but it contains no files. Please leave an issue "
-        f"on GitHub.",
+        "but it contains no files. Please leave an issue "
+        "on GitHub.",
     ):
         copy_all_files(empty_dir, target_dir)
 
     source_dir = user_filesystem / "source-dir"
     dir_with_duplicated_file = user_filesystem / "duplicated-dir"
     dest = dir_with_duplicated_file / "usepackage.txt"
+    assert dest.is_file()
     with pytest.raises(
         NameError,
         match=f"{dest.name} already exists in "
         f"{str(dir_with_duplicated_file)}. Please either remove "
-        f"this from the user-defined GitHub repo, "
-        f"or leave an issue on GitHub if you think the problem is with "
-        f"scikit-package.",
+        "this from the user-defined GitHub repo, "
+        "or leave an issue on GitHub if you think the problem is with "
+        "scikit-package.",
     ):
         copy_all_files(source_dir, dir_with_duplicated_file)
