@@ -1,6 +1,6 @@
 **Added:**
 
-* No news added: refactor `load_headers`
+* Add function `load_headers` to `post_gen_project.py`.
 
 **Changed:**
 
