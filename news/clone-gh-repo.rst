@@ -1,6 +1,6 @@
 **Added:**
 
-* No news added: refactor `clone gh repo`
+* <news item>
 
 **Changed:**
 
@@ -12,7 +12,7 @@
 
 **Removed:**
 
-* <news item>
+* Remove function `copy_gh_repo` in the `post_gen_project.py`.
 
 **Fixed:**
 

@@ -2,10 +2,10 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+
 from cookiecutter.vcs import clone
 
 MANUSCRIPT_FILENAME = "manuscript.tex"
-TEMPOEARY_FILENAME = "_tmp"
 
 def get_scikit_manuscript_dir():
     """Return the full path to the local scikit-package-manuscript
@@ -122,19 +122,6 @@ def copy_all_files(source_dir, target_dir):
     # reuse the code in copy_journal_template_files and then delete that function
     pass
 
-def clone_gh_repo(url):
-    """Clone the repo to a temporary location.
-
-    Parameters
-    ----------
-    url : a url
-
-    Returns
-    -------
-    The path to the contents of the repo on the local files-system
-    """
-    clone_to_dir = Path().cwd() / TEMPOEARY_FILENAME
-    clone(repo_url=url, checkout=None, clone_to_dir=clone_to_dir)
 
 def load_headers(headers_path, manuscript_path):
     """Loads usepackages.txt and newcommands.txt into manuscript.tex
