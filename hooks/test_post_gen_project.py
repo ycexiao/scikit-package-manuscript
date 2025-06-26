@@ -26,15 +26,13 @@ def test_copy_journal_template_files(
         (
             "other",
             "Template other found but it contains no "
-            "files. Please contact the software "
-            "developers.",
+            "files. Please leave an issue on GitHub.",
         ),
         # C2: desired template does not exist. Expect FileNotFoundError
         (
             "yet-another",
-            "Cannot find the provided journal_template: "
-            "yet-another. Please contact the "
-            "software developers.",
+            "Unable to find the provided journal_template: "
+            "yet-another. Please leave an issue on GitHub.",
         ),
     ],
 )
@@ -75,9 +73,9 @@ def test_copy_all_files_bad(user_filesystem):
     target_dir = user_filesystem / "target-dir"
     with pytest.raises(
         FileNotFoundError,
-        match=f"Cannot find the source directory: "
-        f"{str(source_dir)}. Please contact the "
-        f"software developers.",
+        match=f"Unable to find the source directory: "
+        f"{str(source_dir)}. Please leave an issue "
+        f"on GitHub.",
     ):
         copy_all_files(source_dir, target_dir)
 
@@ -85,8 +83,8 @@ def test_copy_all_files_bad(user_filesystem):
     with pytest.raises(
         FileNotFoundError,
         match=f"Source directory {str(empty_dir)} found "
-        f"but it contains no files. Please contact the "
-        f"software developers.",
+        f"but it contains no files. Please leave an issue "
+        f"on GitHub.",
     ):
         copy_all_files(empty_dir, target_dir)
 
@@ -98,7 +96,7 @@ def test_copy_all_files_bad(user_filesystem):
         match=f"{dest.name} already exists in "
         f"{str(dir_with_duplicated_file)}. Please either remove "
         f"this from the user-defined GitHub repo, "
-        f"or contact the developers if you think the issue is with "
-        " scikit-package",
+        f"or leave an issue on GitHub if you think the problem is with "
+        f"scikit-package.",
     ):
         copy_all_files(source_dir, dir_with_duplicated_file)

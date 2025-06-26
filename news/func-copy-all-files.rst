@@ -1,6 +1,6 @@
 **Added:**
 
-* Add function `copy_all_files`.
+* Add function `copy_all_files` to `post_gen_project.py`.
 
 **Changed:**
 
