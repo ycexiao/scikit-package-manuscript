@@ -7,7 +7,17 @@ import pytest
 @pytest.fixture(scope="session")
 def template_files():
     skm_template_files = {
-        "article.cls": "Contents of article.cls",
+        "article.cls": r"Contents of article.cls",
+        "manuscript.tex": r"""
+    \documentclass{article}
+    \usepackage{amsmath}
+    \begin{document}
+    Hello world.
+    \bibliography{note}
+    \bibliographystyle{chicago}
+    \end{document}
+    }
+    """,
     }
     yield skm_template_files
 
@@ -24,20 +34,6 @@ def user_repo_files_and_contents():
     yield user_repo_files_and_contents
 
 
-@pytest.fixture(scope="session")
-def template_manuscript_contents():
-    manuscript = r"""
-    \documentclass{article}
-    \usepackage{amsmath}
-    \begin{document}
-    Hello world.
-    \bibliography{note}
-    \bibliographystyle{chicago}
-    \end{document}
-    """
-    yield manuscript
-
-
 @pytest.fixture
 def mock_home(tmp_path):
     with mock.patch.object(Path, "home", return_value=tmp_path):
@@ -49,7 +45,6 @@ def user_filesystem(
     tmp_path,
     template_files,
     user_repo_files_and_contents,
-    template_manuscript_contents,
 ):
     # create a filesystem with spm in a .cookiecutters directory and
     # template directories called article, other, and another
@@ -67,8 +62,6 @@ def user_filesystem(
     for key, value in template_files.items():
         template_file_path = article_path / key
         template_file_path.write_text(value)
-    manuscript_path = Path(article_path / "manuscript.tex")
-    manuscript_path.write_text(template_manuscript_contents)
 
     source_dir = tmp_path / "source-dir"
     source_dir.mkdir()
