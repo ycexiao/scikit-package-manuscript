@@ -52,7 +52,7 @@ def test_copy_journal_template_files_bad(
 
 
 @pytest.mark.parametrize(
-    "missing_files, expected_headers",
+    "missing_files, expected_manuscript_content",
     [
         # C1: `usepackages.txt` and `newcommands.txt` exist in the
         #   headers_path and there are several usepackages lines in the
@@ -62,27 +62,50 @@ def test_copy_journal_template_files_bad(
         (
             [],
             r"""
+    \documentclass{article}
     \usepackage{package-from-user-usepackage}
     \usepackage{package-in-manuscript}
+    \newcommand{\command_in_manuscript}
     \newcommand{\command_from_user_newcommands}{}
+    \begin{document}
+    Contents of manuscript
+    \bibliography{bib-in-manuscript}
+    \bibliographystyle{chicago}
+    \end{document}
 """,
         ),
         # C2: Only `usepackages.txt`is missing. Expect commands are inserted
-        #   after manuscript's usepackages.
+        #   after manuscript's usepackages and keeping the original packages
+        #   and commands in the manuscript.
         (
             ["usepackages.txt"],
             r"""
+    \documentclass{article}
     \usepackage{package-in-manuscript}
+    \newcommand{\command_in_manuscript}
     \newcommand{\command_from_user_newcommands}{}
+    \begin{document}
+    Contents of manuscript
+    \bibliography{bib-in-manuscript}
+    \bibliographystyle{chicago}
+    \end{document}
 """,
         ),
         # C3: Only `newcommands.txt`is missing. Expect packages are inserted
-        #   before manuscript's usepackages.
+        #   before manuscript's usepackages and keeping the original packages
+        #   and commands in the manuscript.
         (
             ["newcommands.txt"],
             r"""
+    \documentclass{article}
     \usepackage{package-from-user-usepackage}
     \usepackage{package-in-manuscript}
+    \newcommand{\command_in_manuscript}
+    \begin{document}
+    Contents of manuscript
+    \bibliography{bib-in-manuscript}
+    \bibliographystyle{chicago}
+    \end{document}
 """,
         ),
     ],
@@ -90,8 +113,7 @@ def test_copy_journal_template_files_bad(
 def test_load_headers(
     user_filesystem,
     missing_files,
-    expected_headers,
-    template_files,
+    expected_manuscript_content,
     user_repo_files_and_contents,
 ):
     source_dir = user_filesystem / "source-dir"
@@ -101,12 +123,12 @@ def test_load_headers(
         / "scikit-package-manuscript"
         / "templates"
         / "article"
-        / "package-existing-in-manuscript.tex"
+        / "manuscript_with_headers_and_bib.tex"
     )
     for file in missing_files:
         Path(source_dir / file).unlink()
 
-    for key, _ in user_repo_files_and_contents.items():
+    for key in user_repo_files_and_contents:
         if key not in missing_files:
             assert Path(source_dir / key).exists()
         else:
@@ -114,11 +136,5 @@ def test_load_headers(
 
     load_headers(source_dir, manuscript_path)
     actual_manuscript_content = manuscript_path.read_text()
-    template_manuscript_content = template_files[
-        "package-existing-in-manuscript.tex"
-    ]
-    expected_manuscript_content = template_manuscript_content.replace(
-        r" \usepackage{package-in-manuscript}", expected_headers
-    )
 
     assert expected_manuscript_content == actual_manuscript_content
