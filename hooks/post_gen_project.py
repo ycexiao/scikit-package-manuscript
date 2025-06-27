@@ -135,16 +135,19 @@ def copy_all_files(source_dir, target_dir):
     for item in source_dir.iterdir():
         dest = target_dir / item.name
         if dest.exists():
-            raise NameError(
+            raise FileExistsError(
                 f"{dest.name} already exists in {str(target_dir)}. "
                 "Please either remove this from the user-defined GitHub repo, "
                 "or leave an issue on GitHub if you think the problem is with "
                 "scikit-package.",
             )
-        if item.is_dir():
-            shutil.copytree(item, dest, dirs_exist_ok=False)
+
+    for item in source_dir.iterdir():
+        dest = target_dir / item.name
+        if dest.is_file():
+            shutil.copy(item, dest)
         else:
-            shutil.copy2(item, dest)
+            shutil.copytree(item, dest)
     return
 
 
