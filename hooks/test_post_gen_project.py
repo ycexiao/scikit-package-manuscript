@@ -65,8 +65,8 @@ def test_copy_all_files(user_filesystem, user_repo_files_and_contents):
 #  Expect FileNotFoundError.
 # C2: An empty source dir and an existing target dir.
 #  Expect FlileNotFoundError.
-# C3: Existing source dir and target dir,  there is a file with the same name
-#  found in both dirs. Expect FileExistsError.
+# C3: Existing source dir and target dir, but there is a file with the same
+#  name found in both dirs. Expect FileExistsError.
 def test_copy_all_files_bad(user_filesystem):
     # non-existing source directory
     non_existing_source_dir = user_filesystem / "other-dir"
@@ -92,22 +92,22 @@ def test_copy_all_files_bad(user_filesystem):
         copy_all_files(empty_source_dir, target_dir)
 
     # a file with the same name found in both dirs.
-    gh_repo_dir = user_filesystem / "source-dir"
-    dir_with_duplicated_file = user_filesystem / "duplicated-dir"
-    source_file = gh_repo_dir / "usepackage.txt"
-    dest_file = dir_with_duplicated_file / "usepackage.txt"
+    gh_source_dir = user_filesystem / "source-dir"
+    target_dir_with_gh_file = user_filesystem / "duplicated-dir"
+    source_file = gh_source_dir / "usepackage.txt"
+    dest_file = target_dir_with_gh_file / "usepackage.txt"
     assert (
-        gh_repo_dir.exists()
-        and dir_with_duplicated_file.exists()
+        gh_source_dir.exists()
+        and target_dir_with_gh_file.exists()
         and source_file.exists()
         and dest_file.exists()
     )
     with pytest.raises(
         FileExistsError,
         match=f"{dest_file.name} already exists in "
-        f"{str(dir_with_duplicated_file)}. Please either remove "
+        f"{str(target_dir_with_gh_file)}. Please either remove "
         "this from the user-defined GitHub repo, "
         "or leave an issue on GitHub if you think the problem is with "
         "scikit-package.",
     ):
-        copy_all_files(gh_repo_dir, dir_with_duplicated_file)
+        copy_all_files(gh_source_dir, target_dir_with_gh_file)
