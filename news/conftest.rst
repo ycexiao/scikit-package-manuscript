@@ -1,6 +1,6 @@
 **Added:**
 
-* Add `contest.py`
+* Add `contest.py`.
 
 **Changed:**
 

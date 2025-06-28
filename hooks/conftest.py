@@ -60,7 +60,7 @@ def user_filesystem(
     # │       └── templates
     # │           ├── another
     # │           ├── other
-    # │           └── article-template-in-spm
+    # │           └── article
     # │               ├── article-cls-in-spm.cls
     # │               └── manuscript-in-spm.tex
     # ├── empty-user-repo-dir
@@ -79,7 +79,7 @@ def user_filesystem(
         template_path = spm_path / "templates" / template_name
         template_path.mkdir(parents=True, exist_ok=True)
 
-    article_path = Path(spm_path / "templates" / "article-template-in-spm")
+    article_path = Path(spm_path / "templates" / "article")
     article_path.mkdir(parents=True, exist_ok=True)
     for key, value in template_files.items():
         template_file_path = article_path / key
