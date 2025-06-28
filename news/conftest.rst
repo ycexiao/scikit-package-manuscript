@@ -1,6 +1,6 @@
 **Added:**
 
-* Add `contest.py`.
+* Build user_filesystem for testing in `contest.py`.
 
 **Changed:**
 
