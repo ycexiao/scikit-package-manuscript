@@ -74,9 +74,11 @@ def test_copy_all_files_bad(user_filesystem):
     target_dir = user_filesystem / "target-dir"
     with pytest.raises(
         FileNotFoundError,
-        match="Unable to find the source directory: "
-        f"{str(non_existing_source_dir)}. Please leave an issue "
-        "on GitHub.",
+        match=(
+            "Unable to find the source directory: "
+            f"{str(non_existing_source_dir)}. Please leave an issue "
+            "on GitHub."
+        ),
     ):
         copy_all_files(non_existing_source_dir, target_dir)
 
@@ -85,29 +87,27 @@ def test_copy_all_files_bad(user_filesystem):
     assert empty_source_dir.exists() and (not any(empty_source_dir.iterdir()))
     with pytest.raises(
         FileNotFoundError,
-        match=f"Source directory {str(empty_source_dir)} found "
-        "but it contains no files. Please leave an issue "
-        "on GitHub.",
+        match=(
+            f"Source directory {str(empty_source_dir)} found "
+            "but it contains no files. Please leave an issue "
+            "on GitHub."
+        ),
     ):
         copy_all_files(empty_source_dir, target_dir)
 
     # a file with the same name found in both dirs.
-    gh_source_dir = user_filesystem / "source-dir"
-    target_dir_with_gh_file = user_filesystem / "duplicated-dir"
-    source_file = gh_source_dir / "usepackage.txt"
-    dest_file = target_dir_with_gh_file / "usepackage.txt"
-    assert (
-        gh_source_dir.exists()
-        and target_dir_with_gh_file.exists()
-        and source_file.exists()
-        and dest_file.exists()
-    )
+    source_dir = user_filesystem / "source-dir"
+    target_dir = user_filesystem / "duplicated-dir"
+    duplicate_file = target_dir / "usepackage.txt"
+    assert duplicate_file.exists()
     with pytest.raises(
         FileExistsError,
-        match=f"{dest_file.name} already exists in "
-        f"{str(target_dir_with_gh_file)}. Please either remove "
-        "this from the user-defined GitHub repo, "
-        "or leave an issue on GitHub if you think the problem is with "
-        "scikit-package.",
+        match=(
+            f"{duplicate_file.name} already exists in "
+            f"{str(target_dir)}. Please either remove "
+            "this from the user-defined GitHub repo, "
+            "or leave an issue on GitHub if you think the problem is with "
+            "scikit-package."
+        ),
     ):
-        copy_all_files(gh_source_dir, target_dir_with_gh_file)
+        copy_all_files(source_dir, target_dir)

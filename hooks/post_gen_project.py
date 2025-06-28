@@ -129,7 +129,7 @@ def copy_all_files(source_dir, target_dir):
         raise FileNotFoundError(
             f"Source directory {str(source_dir)} found "
             "but it contains no files. Please leave an issue "
-            "on GitHub.",
+            "on GitHub."
         )
 
     for item in source_dir.iterdir():
@@ -139,7 +139,7 @@ def copy_all_files(source_dir, target_dir):
                 f"{dest.name} already exists in {str(target_dir)}. "
                 "Please either remove this from the user-defined GitHub repo, "
                 "or leave an issue on GitHub if you think the problem is with "
-                "scikit-package.",
+                "scikit-package."
             )
 
     for item in source_dir.iterdir():
