@@ -120,8 +120,6 @@ def test_load_bib_info(
     actual_manuscript_content = manuscript_in_project.read_text()
     assert expected_manuscript_content == actual_manuscript_content
     project_dir_with_bib.unlink()
-<<<<<<< Updated upstream
-=======
 
 
 # C1: manuscript.tex doesn't exist in the project directory.
@@ -143,4 +141,3 @@ def test_load_bib_info_bad(
         ),
     ):
         load_bib_info(project_dir_with_bib)
->>>>>>> Stashed changes
