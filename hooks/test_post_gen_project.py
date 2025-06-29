@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 
 import pytest
 
@@ -56,15 +57,16 @@ def test_copy_journal_template_files_bad(
         copy_journal_template_files(input, project_dir)
 
 
-# C1: There are bib files in the cloned directory.
+# C1: There are bib files in the cloned directory and in the project directory
 #   Expect all bib name are inserted into manuscript,
 #   and bib files are copied into manuscript's parent dir
 #   exists.
-# C2: There are no bib files in the cloned directory.
+# C2: There are no bib files in the cloned directory,
+#   but there is a file in the project-directory
 #   Expect manuscript bib entries will not be modified,
 #   and no files are copied.
 @pytest.mark.parametrize(
-    "missing_files, error_message",
+    "missing_files, expected_manuscript_content",
     [
         (
             [],
@@ -74,7 +76,7 @@ def test_copy_journal_template_files_bad(
 \newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
 \begin{document}
 Contents of manuscript
-\bibliography{bib-in-manuscript, user-bib-file-1, user-bib-file-2}
+\bibliography{bib-in-project, user-bib-file-1, user-bib-file-2}
 \bibliographystyle{chicago}
 \end{document}
 """,
@@ -87,7 +89,7 @@ Contents of manuscript
 \newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
 \begin{document}
 Contents of manuscript
-\bibliography{bib-in-manuscript, user-bib-file-1, user-bib-file-2}
+\bibliography{bib-in-project}
 \bibliographystyle{chicago}
 \end{document}
 """,
@@ -95,7 +97,7 @@ Contents of manuscript
     ],
 )
 def test_load_bib_info(
-    user_filesystem, template_files, missing_files, expected_manuscript_content
+    user_filesystem, missing_files, expected_manuscript_content
 ):
     source_dir = user_filesystem / "user-repo-dir"
     manuscript_path = (
@@ -106,16 +108,24 @@ def test_load_bib_info(
         / "article"
         / "manuscript-in-spm.tex"
     )
+
+    # a non-existing dir
+    project_dir_with_bib = user_filesystem / "project-dir-with-bib"
+    manuscript_in_project = project_dir_with_bib / "manuscript.tex"
+    shutil.copytree(source_dir, project_dir_with_bib)
+    shutil.copy(manuscript_path, manuscript_in_project)
+    Path(project_dir_with_bib / "bib-in-project.bib").touch()
+
     for file in missing_files:
-        Path(source_dir / file).unlink()
+        Path(project_dir_with_bib / file).unlink()
 
     for file in source_dir.iterdir():
         if file.name in missing_files:
-            assert not file.exists()
+            assert not (project_dir_with_bib / file.name).exists()
         else:
-            assert file.exists()
+            assert (project_dir_with_bib / file.name).exists()
 
-    load_bib_info(source_dir, manuscript_path)
-    actual_manuscript_content = manuscript_path.read_text()
+    load_bib_info(project_dir_with_bib, manuscript_in_project)
+    actual_manuscript_content = manuscript_in_project.read_text()
     assert expected_manuscript_content == actual_manuscript_content
-    manuscript_path.write_text(template_files["manuscript-in-spm.tex"])
+    project_dir_with_bib.unlink() 
