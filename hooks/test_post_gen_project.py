@@ -1,5 +1,5 @@
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import pytest
 
@@ -128,4 +128,4 @@ def test_load_bib_info(
     load_bib_info(project_dir_with_bib, manuscript_in_project)
     actual_manuscript_content = manuscript_in_project.read_text()
     assert expected_manuscript_content == actual_manuscript_content
-    project_dir_with_bib.unlink() 
+    project_dir_with_bib.unlink()
