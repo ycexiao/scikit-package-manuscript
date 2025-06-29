@@ -14,9 +14,9 @@ def get_scikit_manuscript_dir():
     for candidate in cookiecutter_dir.iterdir():
         candidates.append(candidate)
         if (candidate.is_dir() and
-                "scikit-package-manuscript" in candidate.name):
+                "scikit-package-manuscript" == candidate.name):
             return candidate.resolve()
-    return Path(f"couldn't find scikit-package-manuscript, but did "
+    return Path("Unable to find scikit-package-manuscript, but did "
                 f"find {*candidates,}")  # noqa E231
 
 
@@ -36,14 +36,14 @@ def copy_journal_template_files(journal_template_name, project_dir):
     cookiecutter_path = get_scikit_manuscript_dir()
     template_dir = cookiecutter_path / "templates" / journal_template_name
     if not template_dir.exists():
-        raise FileNotFoundError(f"Cannot find the provided journal_template: "
-                                f"{journal_template_name}. Please contact the "
-                                f"software developers.")
+        raise FileNotFoundError("Unable to find the provided journal_template: "
+                                f"{journal_template_name}. Please leave an issue "
+                                "on GitHub.")
 
     if not any(template_dir.iterdir()):
         raise FileNotFoundError(f"Template {journal_template_name} found but "
-                                f"it contains no files. Please contact the "
-                                f"software developers.")
+                                "it contains no files. Please leave an issue "
+                                "on GitHub.")
     for item in template_dir.iterdir():
         dest = project_dir / item.name
         if item.is_dir():
@@ -144,7 +144,7 @@ def load_headers(headers_path, manuscript_path):
     Parameters
     ----------
     headers_path : Path
-      The path to the location of the usepackages.txt file
+      The path to the location of the usepackages.txt and newcommands.txt file
     manuscript_path : Path
       The path to the manuscript.tex file
 
@@ -154,7 +154,7 @@ def load_headers(headers_path, manuscript_path):
     """
     pass
 
-def load_bib_info(manuscript_path):
+def load_bib_info(bibs_path, manuscript_path):
     """Finds all bib files and loads the names into the \thebibliography
     field.
 
@@ -162,6 +162,8 @@ def load_bib_info(manuscript_path):
 
     Parameters
     ----------
+    bibs_path : Path
+      The path to the location of the bib file.
     manuscript_path : Path
       The path to the manuscript.tex file
 
