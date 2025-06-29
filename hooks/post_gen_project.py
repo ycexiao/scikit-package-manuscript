@@ -154,18 +154,14 @@ def load_headers(headers_path, manuscript_path):
     """
     pass
 
-def load_bib_info(bibs_path, manuscript_path):
-    """Finds all bib files and loads the names into the \thebibliography
-    field.
-
-    Updates manuscript.tex bibliography in place with the name-list of all bib files
+def load_bib_info(project_path):
+    """Finds all bib files and manuscript.tex in project-dir. Loads the
+    bib names into the \thebibliography field in manuscript.tex.
 
     Parameters
     ----------
-    bibs_path : Path
-      The path to the location of the bib file.
-    manuscript_path : Path
-      The path to the manuscript.tex file
+    project_path : Path
+      The path to the location of the project directory.
 
     Returns
     -------
