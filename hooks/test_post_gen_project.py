@@ -20,7 +20,6 @@ def test_copy_journal_template_files(
     user_filesystem, template_files, mock_home
 ):
     project_dir = Path(user_filesystem / "project-dir")
-    project_dir.mkdir(parents=True, exist_ok=True)
     copy_journal_template_files("article", project_dir)
     for key, value in template_files.items():
         assert Path(project_dir / key).exists()
@@ -49,7 +48,6 @@ def test_copy_journal_template_files_bad(
     user_filesystem, mock_home, input, errormessage
 ):
     project_dir = Path(user_filesystem / "project-dir")
-    project_dir.mkdir(parents=True, exist_ok=True)
 
     with pytest.raises(
         FileNotFoundError,
@@ -65,7 +63,40 @@ def test_copy_journal_template_files_bad(
 # C2: There are no bib files in the cloned directory.
 #   Expect manuscript bib entries will not be modified,
 #   and no files are copied.
-def test_load_bib_info(user_filesystem, template_files):
+@pytest.mark.parametrize(
+    "missing_files, error_message",
+    [
+        (
+            [],
+            r"""
+\documentclass{article}
+\usepackage{package-in-manuscript}
+\newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
+\begin{document}
+Contents of manuscript
+\bibliography{bib-in-manuscript, user-bib-file-1, user-bib-file-2}
+\bibliographystyle{chicago}
+\end{document}
+""",
+        ),
+        (
+            ["user-bib-file-1.bib, user-bib-file-2.bib"],
+            r""""
+\documentclass{article}
+\usepackage{package-in-manuscript}
+\newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
+\begin{document}
+Contents of manuscript
+\bibliography{bib-in-manuscript, user-bib-file-1, user-bib-file-2}
+\bibliographystyle{chicago}
+\end{document}
+""",
+        ),
+    ],
+)
+def test_load_bib_info(
+    user_filesystem, template_files, missing_files, expected_manuscript_content
+):
     source_dir = user_filesystem / "user-repo-dir"
     manuscript_path = (
         user_filesystem
@@ -75,38 +106,16 @@ def test_load_bib_info(user_filesystem, template_files):
         / "article"
         / "manuscript-in-spm.tex"
     )
+    for file in missing_files:
+        Path(source_dir / file).unlink()
+
+    for file in source_dir.iterdir():
+        if file.name in missing_files:
+            assert not file.exists()
+        else:
+            assert file.exists()
+
     load_bib_info(source_dir, manuscript_path)
     actual_manuscript_content = manuscript_path.read_text()
-    expected_manuscript_content = r"""
-\documentclass{article}
-\usepackage{package-in-manuscript}
-\newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
-\begin{document}
-Contents of manuscript
-\bibliography{user-bib-file-1, user-bib-file-2}
-\bibliography{bib-in-manuscript}
-\bibliographystyle{chicago}
-\end{document}
-    """
     assert expected_manuscript_content == actual_manuscript_content
     manuscript_path.write_text(template_files["manuscript-in-spm.tex"])
-
-    Path(source_dir / "user-bib-file-1.bib").unlink()
-    Path(source_dir / "user-bib-file-2.bib").unlink()
-    load_bib_info(source_dir, manuscript_path)
-    actual_manuscript_content = manuscript_path.read_text()
-    expected_manuscript_content = template_files["manuscript-in-spm.tex"]
-    assert expected_manuscript_content == actual_manuscript_content
-    manuscript_path.write_text(template_files["manuscript-in-spm.tex"])
-
-
-# C1: The manuscript path doesn't exist. Expect file not found error.
-def test_load_bib_info_bad(user_filesystem):
-    source_dir = user_filesystem / "user-repo-dir"
-    manuscript_path = user_filesystem / "not-existing-file"
-    assert not manuscript_path.exists()
-
-    with pytest.raises(
-        FileNotFoundError, match=_file_not_found_error_message(manuscript_path)
-    ):
-        load_bib_info(source_dir, manuscript_path)

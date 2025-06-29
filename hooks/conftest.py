@@ -70,7 +70,7 @@ def user_filesystem(
     # │   ├── user-bib-file-1.bib
     # │   ├── user-bib-file-2.bib
     # │   └── user-supplied-non-bib-file.tex
-    # └── target-dir
+    # └── project-dir
     spm_path = Path(tmp_path / ".cookiecutters" / "scikit-package-manuscript")
     spm_path.mkdir(parents=True, exist_ok=True)
 
@@ -87,8 +87,8 @@ def user_filesystem(
 
     user_repo_dir = tmp_path / "user-repo-dir"
     user_repo_dir.mkdir()
-    target_dir = tmp_path / "target-dir"
-    target_dir.mkdir()
+    project_dir = tmp_path / "project-dir"
+    project_dir.mkdir()
     for key, value in user_repo_files_and_contents.items():
         file_path = user_repo_dir / key
         file_path.write_text(value)
