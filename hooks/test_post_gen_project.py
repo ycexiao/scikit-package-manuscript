@@ -52,7 +52,7 @@ def test_copy_journal_template_files_bad(
 # C1: Existing source dir and target dir.
 #  Expect all files in source dir are copied to target dir.
 def test_copy_all_files(user_filesystem, user_repo_files_and_contents):
-    source_dir = user_filesystem / "source-dir"
+    source_dir = user_filesystem / "user-repo-dir"
     target_dir = user_filesystem / "target-dir"
     copy_all_files(source_dir, target_dir)
     for key, value in user_repo_files_and_contents.items():
@@ -83,7 +83,7 @@ def test_copy_all_files_bad(user_filesystem):
         copy_all_files(non_existing_source_dir, target_dir)
 
     # empty source directory
-    empty_source_dir = user_filesystem / "empty-dir"
+    empty_source_dir = user_filesystem / "empty-user-repo-dir"
     assert empty_source_dir.exists() and (not any(empty_source_dir.iterdir()))
     with pytest.raises(
         FileNotFoundError,
@@ -96,9 +96,11 @@ def test_copy_all_files_bad(user_filesystem):
         copy_all_files(empty_source_dir, target_dir)
 
     # a file with the same name found in both dirs.
-    source_dir = user_filesystem / "source-dir"
+    source_dir = user_filesystem / "user-repo-dir"
     target_dir = user_filesystem / "duplicated-dir"
-    duplicate_file = target_dir / "usepackage.txt"
+    target_dir.mkdir()
+    duplicate_file = target_dir / "usepackages.txt"
+    duplicate_file.touch()
     assert duplicate_file.exists()
     with pytest.raises(
         FileExistsError,

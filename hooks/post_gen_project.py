@@ -144,7 +144,7 @@ def copy_all_files(source_dir, target_dir):
 
     for item in source_dir.iterdir():
         dest = target_dir / item.name
-        if dest.is_file():
+        if item.is_file():
             shutil.copy(item, dest)
         else:
             shutil.copytree(item, dest)
