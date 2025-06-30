@@ -3,16 +3,39 @@ from unittest import mock
 
 import pytest
 
-TEMPLATE_FILES = {
-    "manuscript.tex": "Contents of manuscript.tex",
-    "article.cls": "Contents of article.cls",
-    "my-bib.bib": "Contents of my-bib.bib",
-}
-
 
 @pytest.fixture(scope="session")
 def template_files():
-    yield TEMPLATE_FILES
+    spm_template_files = {
+        "article-cls-in-spm.cls": r"Contents of article-cls-in-spm.cls",
+        "manuscript-in-spm.tex": r"""
+\documentclass{article}
+\usepackage{package-in-manuscript}
+\newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
+\begin{document}
+Contents of manuscript
+\bibliography{bib-in-manuscript}
+\bibliographystyle{chicago}
+\end{document}
+""",
+    }
+    yield spm_template_files
+
+
+@pytest.fixture(scope="session")
+def user_repo_files_and_contents():
+    user_repo_files_and_contents = {
+        "usepackages.txt": r"\usepackage{package-from-user-usepackage}",
+        "newcommands.txt": (
+            r"\newcommand{\command_from_user_newcommands}[1]{\mathrm{#1}}"
+        ),
+        "user-bib-file-1.bib": "Contents of user-bib-file-1.bib",
+        "user-bib-file-2.bib": "Contents of user-bib-file-2.bib",
+        "user-supplied-non-bib-file.tex": (
+            "Contents of user-supplied-non-bib-file.tex"
+        ),
+    }
+    yield user_repo_files_and_contents
 
 
 @pytest.fixture
@@ -22,10 +45,32 @@ def mock_home(tmp_path):
 
 
 @pytest.fixture
-def user_filesystem(tmp_path):
+def user_filesystem(
+    tmp_path,
+    template_files,
+    user_repo_files_and_contents,
+):
     # create a filesystem with spm in a .cookiecutters directory and
     # template directories called article, other, and another
     # the article template contains a set of files defined in TEMPLATE_FILES
+    #
+    # directory structure:
+    # ├── .cookiecutters
+    # │   └── scikit-package-manuscript
+    # │       └── templates
+    # │           ├── another
+    # │           ├── other
+    # │           └── article
+    # │               ├── article-cls-in-spm.cls
+    # │               └── manuscript-in-spm.tex
+    # ├── empty-user-repo-dir
+    # ├── user-repo-dir
+    # │   ├── newcommands.txt
+    # │   ├── usepackages.txt
+    # │   ├── user-bib-file-1.bib
+    # │   ├── user-bib-file-2.bib
+    # │   └── user-supplied-non-bib-file.tex
+    # └── target-dir
     spm_path = Path(tmp_path / ".cookiecutters" / "scikit-package-manuscript")
     spm_path.mkdir(parents=True, exist_ok=True)
 
@@ -36,7 +81,19 @@ def user_filesystem(tmp_path):
 
     article_path = Path(spm_path / "templates" / "article")
     article_path.mkdir(parents=True, exist_ok=True)
-    for key, value in TEMPLATE_FILES.items():
-        manuscript_path = article_path / key
-        manuscript_path.write_text(value)
+    for key, value in template_files.items():
+        template_file_path = article_path / key
+        template_file_path.write_text(value)
+
+    user_repo_dir = tmp_path / "user-repo-dir"
+    user_repo_dir.mkdir()
+    target_dir = tmp_path / "target-dir"
+    target_dir.mkdir()
+    for key, value in user_repo_files_and_contents.items():
+        file_path = user_repo_dir / key
+        file_path.write_text(value)
+
+    empty_dir = tmp_path / "empty-user-repo-dir"
+    empty_dir.mkdir()
+
     yield tmp_path
