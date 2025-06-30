@@ -84,6 +84,7 @@ def user_filesystem(
     for key, value in template_files.items():
         template_file_path = article_path / key
         template_file_path.write_text(value)
+    manuscript_path = article_path / "manuscript-in-spm.tex"
 
     user_repo_dir = tmp_path / "user-repo-dir"
     user_repo_dir.mkdir()
@@ -96,4 +97,10 @@ def user_filesystem(
     empty_dir = tmp_path / "empty-user-repo-dir"
     empty_dir.mkdir()
 
-    yield tmp_path
+    important_paths = {
+        "user_repo_dir": user_repo_dir,
+        "project_dir": project_dir,
+        "manuscript_path": manuscript_path,
+    }
+
+    yield tmp_path, important_paths

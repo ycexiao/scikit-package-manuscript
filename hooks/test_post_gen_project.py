@@ -17,10 +17,8 @@ def _file_not_found_error_message(file_path):
 
 # C1: multiple files in the template, expect all files will be copied
 #   to project_path
-def test_copy_journal_template_files(
-    user_filesystem, template_files, mock_home
-):
-    project_dir = Path(user_filesystem / "project-dir")
+def test_copy_journal_template_files(home_path, template_files, mock_home):
+    project_dir = Path(home_path / "project-dir")
     copy_journal_template_files("article", project_dir)
     for key, value in template_files.items():
         assert Path(project_dir / key).exists()
@@ -46,9 +44,9 @@ def test_copy_journal_template_files(
     ],
 )
 def test_copy_journal_template_files_bad(
-    user_filesystem, mock_home, input, errormessage
+    home_path, mock_home, input, errormessage
 ):
-    project_dir = Path(user_filesystem / "project-dir")
+    project_dir = Path(home_path / "project-dir")
 
     with pytest.raises(
         FileNotFoundError,
@@ -94,50 +92,38 @@ Contents of manuscript
 def test_load_bib_info(
     user_filesystem, exists_bib, expected_manuscript_content
 ):
-    source_dir = user_filesystem / "user-repo-dir"
-    manuscript_path = (
-        user_filesystem
-        / ".cookiecutters"
-        / "scikit-package-manuscript"
-        / "templates"
-        / "article"
-        / "manuscript-in-spm.tex"
-    )
+    home_path, paths_in_filesystem = user_filesystem
+    manuscript_path = paths_in_filesystem["manuscript.tex"]
 
     # a non-existing dir
-    project_dir_with_bib = user_filesystem / "project-dir-with-bib"
+    project_dir_with_bib = home_path / "project-dir-with-bib"
     manuscript_in_project = project_dir_with_bib / "manuscript.tex"
-    shutil.copytree(source_dir, project_dir_with_bib)
     shutil.copy(manuscript_path, manuscript_in_project)
-    Path(project_dir_with_bib / "bib-in-project.bib").touch()
-
-    if not exists_bib:
-        for item in project_dir_with_bib.iterdir():
-            if item.isfile() and item.endswith(".bib"):
-                item.unlink()
+    if exists_bib:
+        Path(project_dir_with_bib / "bib-in-project.bib").touch()
+        Path(project_dir_with_bib / "user-bib-file-1.bib").touch()
+        Path(project_dir_with_bib / "user-bib-file-2.bib").touch()
 
     load_bib_info(project_dir_with_bib)
     actual_manuscript_content = manuscript_in_project.read_text()
     assert expected_manuscript_content == actual_manuscript_content
-    project_dir_with_bib.unlink()
 
 
 # C1: manuscript.tex doesn't exist in the project directory.
 #   Expect FileNotFoundError.
-def test_load_bib_info_bad(
-    user_filesystem, missing_files, expected_manuscript_content
-):
-
-    source_dir = user_filesystem / "user-repo-dir"
-    project_dir_with_bib = user_filesystem / "project-dir-with-bib"
-    shutil.copytree(source_dir, project_dir_with_bib)
+def test_load_bib_info_bad(user_filesystem):
+    home_path, _ = user_filesystem
+    project_dir_without_manuscript = (
+        home_path / "project-dir-without-manuscript"
+    )
+    project_dir_without_manuscript.mkdir()
 
     with pytest.raises(
         FileNotFoundError,
         match=(
             "Unable to find manuscript.tex in "
-            f"{str(str(project_dir_with_bib))} "
+            f"{str(str(project_dir_without_manuscript))} "
             "Please leave an issue on GitHub."
         ),
     ):
-        load_bib_info(project_dir_with_bib)
+        load_bib_info(project_dir_without_manuscript)
