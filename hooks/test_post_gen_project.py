@@ -117,7 +117,6 @@ def test_load_bib_info_bad(user_filesystem):
         home_path / "project-dir-without-manuscript"
     )
     project_dir_without_manuscript.mkdir()
-
     with pytest.raises(
         FileNotFoundError,
         match=(
