@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 
 import pytest
@@ -26,15 +27,13 @@ def test_copy_journal_template_files(
         (
             "other",
             "Template other found but it contains no "
-            "files. Please contact the software "
-            "developers.",
+            "files. Please leave an issue on GitHub.",
         ),
         # C2: desired template does not exist. Expect FileNotFoundError
         (
             "yet-another",
-            "Cannot find the provided journal_template: "
-            "yet-another. Please contact the "
-            "software developers.",
+            "Unable to find the provided journal_template: "
+            "yet-another. Please leave an issue on GitHub.",
         ),
     ],
 )
@@ -52,7 +51,7 @@ def test_copy_journal_template_files_bad(
 
 
 @pytest.mark.parametrize(
-    "missing_files, expected_manuscript_content",
+    "existing_files, expected_manuscript_content",
     [
         # C1: `usepackages.txt` and `newcommands.txt` exist in the
         #   headers_path and there are several usepackages lines in the
@@ -60,81 +59,81 @@ def test_copy_journal_template_files_bad(
         #   Expect packages and commands are inserted into the manuscript in
         #   a order that packages come before commands.
         (
-            [],
+            ["usepackages.txt", "newcommands.txt"],
             r"""
-    \documentclass{article}
-    \usepackage{package-from-user-usepackage}
-    \usepackage{package-in-manuscript}
-    \newcommand{\command_in_manuscript}
-    \newcommand{\command_from_user_newcommands}{}
-    \begin{document}
-    Contents of manuscript
-    \bibliography{bib-in-manuscript}
-    \bibliographystyle{chicago}
-    \end{document}
+\documentclass{article}
+\usepackage{package-from-user-usepackage}
+\usepackage{package-in-manuscript}
+\newcommand{\command_from_user_newcommands}[1]{\mathrm{#1}}
+\newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
+\begin{document}
+Contents of manuscript
+\bibliography{bib-in-manuscript}
+\bibliographystyle{chicago}
+\end{document}
 """,
         ),
-        # C2: Only `usepackages.txt`is missing. Expect commands are inserted
-        #   after manuscript's usepackages and keeping the original packages
-        #   and commands in the manuscript.
+        # C2: Only usepackages.txt exists. Expect user's usepackages are
+        #   inserted before manuscript's usepackages abd after
+        #   \begin{documentclass}
         (
             ["usepackages.txt"],
             r"""
-    \documentclass{article}
-    \usepackage{package-in-manuscript}
-    \newcommand{\command_in_manuscript}
-    \newcommand{\command_from_user_newcommands}{}
-    \begin{document}
-    Contents of manuscript
-    \bibliography{bib-in-manuscript}
-    \bibliographystyle{chicago}
-    \end{document}
+\documentclass{article}
+\usepackage{package-from-user-usepackage}
+\usepackage{package-in-manuscript}
+\newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
+\begin{document}
+Contents of manuscript
+\bibliography{bib-in-manuscript}
+\bibliographystyle{chicago}
+\end{document}
 """,
         ),
-        # C3: Only `newcommands.txt`is missing. Expect packages are inserted
-        #   before manuscript's usepackages and keeping the original packages
-        #   and commands in the manuscript.
+        # C3: Only newcommands.txt exists. Expect user's newcommands are
+        #   inserted before manuscript's newcommands and after manuscrip'ts
+        #   usepackages.
         (
             ["newcommands.txt"],
             r"""
-    \documentclass{article}
-    \usepackage{package-from-user-usepackage}
-    \usepackage{package-in-manuscript}
-    \newcommand{\command_in_manuscript}
-    \begin{document}
-    Contents of manuscript
-    \bibliography{bib-in-manuscript}
-    \bibliographystyle{chicago}
-    \end{document}
+\documentclass{article}
+\usepackage{package-in-manuscript}
+\newcommand{\command_from_user_newcommands}[1]{\mathrm{#1}}
+\newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
+\begin{document}
+Contents of manuscript
+\bibliography{bib-in-manuscript}
+\bibliographystyle{chicago}
+\end{document}
 """,
         ),
     ],
 )
 def test_load_headers(
     user_filesystem,
-    missing_files,
+    existing_files,
     expected_manuscript_content,
-    user_repo_files_and_contents,
 ):
-    source_dir = user_filesystem / "source-dir"
+    # a non-existing dir
+    project_dir_with_header = user_filesystem / "project-dir-with-header"
+    project_dir_with_header.mkdir()
     manuscript_path = (
         user_filesystem
         / ".cookiecutters"
         / "scikit-package-manuscript"
         / "templates"
         / "article"
-        / "manuscript_with_headers_and_bib.tex"
+        / "manuscript-in-spm.tex"
     )
-    for file in missing_files:
-        Path(source_dir / file).unlink()
+    manuscript_in_project = project_dir_with_header / "manuscript.tex"
+    shutil.copy(manuscript_path, manuscript_in_project)
 
-    for key in user_repo_files_and_contents:
-        if key not in missing_files:
-            assert Path(source_dir / key).exists()
-        else:
-            assert not Path(source_dir / key).exists()
+    source_dir = user_filesystem / "user-repo-dir"
+    for file_name in existing_files:
+        source = source_dir / file_name
+        dest = project_dir_with_header / file_name
+        shutil.copy(source, dest)
 
-    load_headers(source_dir, manuscript_path)
-    actual_manuscript_content = manuscript_path.read_text()
-
+    load_headers(project_dir_with_header)
+    actual_manuscript_content = manuscript_in_project.read_text()
     assert expected_manuscript_content == actual_manuscript_content
