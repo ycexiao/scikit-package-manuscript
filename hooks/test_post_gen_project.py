@@ -3,13 +3,19 @@ from pathlib import Path
 
 import pytest
 
-from hooks.post_gen_project import copy_journal_template_files, copy_all_files, load_bib_info
+from hooks.post_gen_project import (
+    copy_all_files,
+    copy_journal_template_files,
+    load_bib_info,
+)
 
 
 # C1: multiple files in the template, expect all files will be copied
 #   to project_path
-def test_copy_journal_template_files(home_path, template_files, mock_home):
-    project_dir = Path(home_path / "project-dir")
+def test_copy_journal_template_files(
+    user_filesystem, template_files, mock_home
+):
+    project_dir = user_filesystem["project-dir"]
     copy_journal_template_files("article", project_dir)
     for key, value in template_files.items():
         assert Path(project_dir / key).exists()
@@ -35,10 +41,9 @@ def test_copy_journal_template_files(home_path, template_files, mock_home):
     ],
 )
 def test_copy_journal_template_files_bad(
-    home_path, mock_home, input, errormessage
+    user_filesystem, mock_home, input, errormessage
 ):
-    project_dir = Path(home_path / "project-dir")
-
+    project_dir = user_filesystem["project-dir"]
     with pytest.raises(
         FileNotFoundError,
         match=errormessage,
@@ -49,11 +54,11 @@ def test_copy_journal_template_files_bad(
 # C1: Existing source dir and target dir.
 #  Expect all files in source dir are copied to target dir.
 def test_copy_all_files(user_filesystem, user_repo_files_and_contents):
-    source_dir = user_filesystem / "user-repo-dir"
-    target_dir = user_filesystem / "target-dir"
-    copy_all_files(source_dir, target_dir)
+    source_dir = user_filesystem["user-repo-dir"]
+    project_dir = user_filesystem["project-dir"]
+    copy_all_files(source_dir, project_dir)
     for key, value in user_repo_files_and_contents.items():
-        file_path = target_dir / key
+        file_path = project_dir / key
         assert file_path.exists()
         assert file_path.read_text() == value
 
@@ -66,9 +71,10 @@ def test_copy_all_files(user_filesystem, user_repo_files_and_contents):
 #  name found in both dirs. Expect FileExistsError.
 def test_copy_all_files_bad(user_filesystem):
     # non-existing source directory
-    non_existing_source_dir = user_filesystem / "other-dir"
+    home_dir = user_filesystem["home-dir"]
+    non_existing_source_dir = home_dir / "other-dir"
     assert not non_existing_source_dir.exists()
-    target_dir = user_filesystem / "target-dir"
+    project_dir = user_filesystem["project-dir"]
     with pytest.raises(
         FileNotFoundError,
         match=(
@@ -77,10 +83,10 @@ def test_copy_all_files_bad(user_filesystem):
             "on GitHub."
         ),
     ):
-        copy_all_files(non_existing_source_dir, target_dir)
+        copy_all_files(non_existing_source_dir, project_dir)
 
     # empty source directory
-    empty_source_dir = user_filesystem / "empty-user-repo-dir"
+    empty_source_dir = home_dir / "empty-user-repo-dir"
     assert empty_source_dir.exists() and (not any(empty_source_dir.iterdir()))
     with pytest.raises(
         FileNotFoundError,
@@ -90,26 +96,26 @@ def test_copy_all_files_bad(user_filesystem):
             "on GitHub."
         ),
     ):
-        copy_all_files(empty_source_dir, target_dir)
+        copy_all_files(empty_source_dir, project_dir)
 
     # a file with the same name found in both dirs.
-    source_dir = user_filesystem / "user-repo-dir"
-    target_dir = user_filesystem / "duplicated-dir"
-    target_dir.mkdir()
-    duplicate_file = target_dir / "usepackages.txt"
+    source_dir = user_filesystem["user-repo-dir"]
+    dir_already_containing_duplicate_file = home_dir / "duplicated-dir"
+    dir_already_containing_duplicate_file.mkdir()
+    duplicate_file = dir_already_containing_duplicate_file / "usepackages.txt"
     duplicate_file.touch()
     assert duplicate_file.exists()
     with pytest.raises(
         FileExistsError,
         match=(
             f"{duplicate_file.name} already exists in "
-            f"{str(target_dir)}. Please either remove "
-            "this from the user-defined GitHub repo, "
+            f"{str(dir_already_containing_duplicate_file)}. Please either "
+            "remove this from the user-defined GitHub repo, "
             "or leave an issue on GitHub if you think the problem is with "
             "scikit-package."
         ),
     ):
-        copy_all_files(source_dir, target_dir)
+        copy_all_files(source_dir, dir_already_containing_duplicate_file)
 
 
 @pytest.mark.parametrize(
@@ -149,18 +155,16 @@ Contents of manuscript
 def test_load_bib_info(
     user_filesystem, exists_bib, expected_manuscript_content
 ):
-    home_path, paths_in_filesystem = user_filesystem
-    manuscript_path = paths_in_filesystem["manuscript.tex"]
-
+    home_dir = user_filesystem["home-dir"]
+    manuscript_path = user_filesystem["manuscript-path"]
     # a non-existing dir
-    project_dir_with_bib = home_path / "project-dir-with-bib"
+    project_dir_with_bib = home_dir / "project-dir-with-bib"
     manuscript_in_project = project_dir_with_bib / "manuscript.tex"
     shutil.copy(manuscript_path, manuscript_in_project)
     if exists_bib:
         Path(project_dir_with_bib / "bib-in-project.bib").touch()
         Path(project_dir_with_bib / "user-bib-file-1.bib").touch()
         Path(project_dir_with_bib / "user-bib-file-2.bib").touch()
-
     load_bib_info(project_dir_with_bib)
     actual_manuscript_content = manuscript_in_project.read_text()
     assert expected_manuscript_content == actual_manuscript_content
@@ -169,9 +173,9 @@ def test_load_bib_info(
 # C1: manuscript.tex doesn't exist in the project directory.
 #   Expect FileNotFoundError.
 def test_load_bib_info_bad(user_filesystem):
-    home_path, _ = user_filesystem
+    home_dir = user_filesystem["home-dir"]
     project_dir_without_manuscript = (
-        home_path / "project-dir-without-manuscript"
+        home_dir / "project-dir-without-manuscript"
     )
     project_dir_without_manuscript.mkdir()
     with pytest.raises(

@@ -16,11 +16,7 @@ def get_scikit_manuscript_dir():
         if (candidate.is_dir() and
                 "scikit-package-manuscript" == candidate.name):
             return candidate.resolve()
-<<<<<<< HEAD
     return Path("Unable to find scikit-package-manuscript, but did "
-=======
-    return Path("couldn't find scikit-package-manuscript, but did "
->>>>>>> 5ff7c96210f726f967252c4a51819d910b235825
                 f"find {*candidates,}")  # noqa E231
 
 
@@ -178,7 +174,7 @@ def load_headers(headers_path, manuscript_path):
     Parameters
     ----------
     headers_path : Path
-      The path to the location of the usepackages.txt and newcommands.txt file
+      The path to the location of the usepackages.txt file
     manuscript_path : Path
       The path to the manuscript.tex file
 
@@ -189,8 +185,10 @@ def load_headers(headers_path, manuscript_path):
     pass
 
 def load_bib_info(project_path):
-    """Finds all bib files and manuscript.tex in project-dir. Loads the
-    bib names into the \thebibliography field in manuscript.tex.
+    """Loads user-defined bib files into manuscript.tex.
+    
+    Finds all bib files and manuscript.tex in project-dir. Loads the
+    bib names into the \bibliography field in manuscript.tex.
 
     Parameters
     ----------

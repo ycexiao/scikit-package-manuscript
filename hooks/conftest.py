@@ -73,12 +73,10 @@ def user_filesystem(
     # └── project-dir
     spm_path = Path(tmp_path / ".cookiecutters" / "scikit-package-manuscript")
     spm_path.mkdir(parents=True, exist_ok=True)
-
     template_names = ["other", "another"]
     for template_name in template_names:
         template_path = spm_path / "templates" / template_name
         template_path.mkdir(parents=True, exist_ok=True)
-
     article_path = Path(spm_path / "templates" / "article")
     article_path.mkdir(parents=True, exist_ok=True)
     for key, value in template_files.items():
@@ -93,14 +91,13 @@ def user_filesystem(
     for key, value in user_repo_files_and_contents.items():
         file_path = user_repo_dir / key
         file_path.write_text(value)
-
     empty_dir = tmp_path / "empty-user-repo-dir"
     empty_dir.mkdir()
 
     important_paths = {
-        "user_repo_dir": user_repo_dir,
-        "project_dir": project_dir,
-        "manuscript_path": manuscript_path,
+        "home-dir": tmp_path,
+        "user-repo-dir": user_repo_dir,
+        "project-dir": project_dir,
+        "manuscript-path": manuscript_path,
     }
-
-    yield tmp_path, important_paths
+    yield important_paths
