@@ -96,7 +96,7 @@ def _insert_to_manuscript(manuscript_text, insert_text, location_keyword, method
                 inserted = True
     elif method=="above":
         for line in lines:
-            if not inserted and r"\end{document}" in line:
+            if not inserted and line.lstrip().startswith(location_keyword):
                 result_lines.append(insert_text)
                 inserted = True
             result_lines.append(line)
@@ -126,8 +126,38 @@ def copy_all_files(source_dir, target_dir):
       The path to the location of the output project where the files
       will be copied to.
     """
-    # reuse the code in copy_journal_template_files and then delete that function
-    pass
+    if not source_dir.exists():
+        raise FileNotFoundError(
+            "Unable to find the source directory: "
+            f"{str(source_dir)}. Please leave an issue "
+            "on GitHub."
+        )
+
+    if not any(source_dir.iterdir()):
+        raise FileNotFoundError(
+            f"Source directory {str(source_dir)} found "
+            "but it contains no files. Please leave an issue "
+            "on GitHub."
+        )
+
+    for item in source_dir.iterdir():
+        dest = target_dir / item.name
+        if dest.exists():
+            raise FileExistsError(
+                f"{dest.name} already exists in {str(target_dir)}. "
+                "Please either remove this from the user-defined GitHub repo, "
+                "or leave an issue on GitHub if you think the problem is with "
+                "scikit-package."
+            )
+
+    for item in source_dir.iterdir():
+        dest = target_dir / item.name
+        if item.is_file():
+            shutil.copy(item, dest)
+        else:
+            shutil.copytree(item, dest)
+    return
+
 
 def clone_gh_repo(url):
     """Clone the repo to a temporary location.
@@ -143,7 +173,7 @@ def clone_gh_repo(url):
     pass
 
 def load_headers(project_path, manuscript_file_name="manuscript.tex"):
-    """Loads user-defined latex packages and new-commands into the
+    r"""Loads user-defined latex packages and new-commands into the
     mauscript template tex file.
 
     Find usepackages.txt, newcommands.txt, and manuscript.tex in
@@ -151,7 +181,7 @@ def load_headers(project_path, manuscript_file_name="manuscript.tex"):
     manuscript.tex.
 
     Example content of usepackages.txt:
-    \usepackage{mathtools}
+    \\usepackage{mathtools}
     ...
 
     Example content of newcommands.txt:
@@ -174,12 +204,12 @@ def load_headers(project_path, manuscript_file_name="manuscript.tex"):
             f"{str(project_path)}. Please leave an issue on GitHub."
         )
     headers = []
-    manuscript_content = manuscript_path.read_text()
-    usepackage_in_manuscript, manuscript_without_usepackage = _split_lines_with_keyword(manuscript_content, r"\usepackage")
-    headers.append(usepackage_in_manuscript)
     usepackage_path = Path(project_path / "usepackages.txt")
     if usepackage_path.exists():
         headers.append(usepackage_path.read_text())
+    manuscript_content = manuscript_path.read_text()
+    usepackage_in_manuscript, manuscript_without_usepackage = _split_lines_with_keyword(manuscript_content, r"\usepackage")
+    headers.append(usepackage_in_manuscript)
     commands_path = Path(project_path / "newcommands.txt")
     if commands_path.exists():
         headers.append(commands_path.read_text())
