@@ -186,7 +186,7 @@ def load_headers(headers_path, manuscript_path):
 
 def load_bib_info(project_path):
     """Loads user-defined bib files into manuscript.tex.
-    
+
     Finds all bib files and manuscript.tex in project-dir. Loads the
     bib names into the \bibliography field in manuscript.tex.
 
