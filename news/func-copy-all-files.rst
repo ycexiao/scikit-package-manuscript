@@ -1,6 +1,6 @@
 **Added:**
 
-* Add function ``load_bib_info`` to ``post_gen_project.py``.
+* Add function `copy_all_files` to `post_gen_project.py`.
 
 **Changed:**
 

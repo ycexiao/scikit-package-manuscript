@@ -16,7 +16,11 @@ def get_scikit_manuscript_dir():
         if (candidate.is_dir() and
                 "scikit-package-manuscript" == candidate.name):
             return candidate.resolve()
+<<<<<<< HEAD
     return Path("Unable to find scikit-package-manuscript, but did "
+=======
+    return Path("couldn't find scikit-package-manuscript, but did "
+>>>>>>> 5ff7c96210f726f967252c4a51819d910b235825
                 f"find {*candidates,}")  # noqa E231
 
 
@@ -118,8 +122,38 @@ def copy_all_files(source_dir, target_dir):
       The path to the location of the output project where the files
       will be copied to.
     """
-    # reuse the code in copy_journal_template_files and then delete that function
-    pass
+    if not source_dir.exists():
+        raise FileNotFoundError(
+            "Unable to find the source directory: "
+            f"{str(source_dir)}. Please leave an issue "
+            "on GitHub."
+        )
+
+    if not any(source_dir.iterdir()):
+        raise FileNotFoundError(
+            f"Source directory {str(source_dir)} found "
+            "but it contains no files. Please leave an issue "
+            "on GitHub."
+        )
+
+    for item in source_dir.iterdir():
+        dest = target_dir / item.name
+        if dest.exists():
+            raise FileExistsError(
+                f"{dest.name} already exists in {str(target_dir)}. "
+                "Please either remove this from the user-defined GitHub repo, "
+                "or leave an issue on GitHub if you think the problem is with "
+                "scikit-package."
+            )
+
+    for item in source_dir.iterdir():
+        dest = target_dir / item.name
+        if item.is_file():
+            shutil.copy(item, dest)
+        else:
+            shutil.copytree(item, dest)
+    return
+
 
 def clone_gh_repo(url):
     """Clone the repo to a temporary location.
