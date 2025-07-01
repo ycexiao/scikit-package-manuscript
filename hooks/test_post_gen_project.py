@@ -202,7 +202,6 @@ def test_load_headers(
         source = source_dir / file_name
         dest = project_dir_with_header / file_name
         shutil.copy(source, dest)
-
     load_headers(project_dir_with_header)
     actual_manuscript_content = manuscript_in_project.read_text()
     assert expected_manuscript_content == actual_manuscript_content

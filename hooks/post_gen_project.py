@@ -181,7 +181,7 @@ def load_headers(project_path, manuscript_file_name="manuscript.tex"):
     manuscript.tex.
 
     Example content of usepackages.txt:
-    \\usepackage{mathtools}
+    \usepackage{mathtools}
     ...
 
     Example content of newcommands.txt:
