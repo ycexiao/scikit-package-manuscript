@@ -142,10 +142,21 @@ def clone_gh_repo(url):
     """
     pass
 
-def load_headers(project_path):
-    """Find usepackages.txt ,newcommands.txt, and manuscript.tex in
+def load_headers(project_path, manuscript_file_name="manuscript.tex"):
+    """Loads user-defined latex packages and new-commands into the
+    mauscript template tex file.
+
+    Find usepackages.txt, newcommands.txt, and manuscript.tex in
     project directory. Insert usepacakgea and new commands into
     manuscript.tex.
+
+    Example content of usepackages.txt:
+    \usepackage{mathtools}
+    ...
+
+    Example content of newcommands.txt:
+    \newcommand{\command_from_user_newcommands}[1]{\mathrm{#1}}
+    ...
 
     Parameters
     ----------
@@ -156,20 +167,20 @@ def load_headers(project_path):
     -------
     None
     """
-    manuscript_path = project_path / MANUSCRIPT_FILENAME
+    manuscript_path = project_path / manuscript_file_name
     if not manuscript_path.exists():
         raise FileNotFoundError(
-            f"Unable to find {MANUSCRIPT_FILENAME} in "
+            f"Unable to find {manuscript_file_name} in "
             f"{str(project_path)}. Please leave an issue on GitHub."
         )
+    headers = []
     manuscript_content = manuscript_path.read_text()
     usepackage_in_manuscript, manuscript_without_usepackage = _split_lines_with_keyword(manuscript_content, r"\usepackage")
-    headers = []
+    headers.append(usepackage_in_manuscript)
     usepackage_path = Path(project_path / "usepackages.txt")
     if usepackage_path.exists():
         headers.append(usepackage_path.read_text())
     commands_path = Path(project_path / "newcommands.txt")
-    headers.append(usepackage_in_manuscript)
     if commands_path.exists():
         headers.append(commands_path.read_text())
     headers_text = '\n'.join(headers)

@@ -127,7 +127,6 @@ def test_load_headers(
     )
     manuscript_in_project = project_dir_with_header / "manuscript.tex"
     shutil.copy(manuscript_path, manuscript_in_project)
-
     source_dir = user_filesystem / "user-repo-dir"
     for file_name in existing_files:
         source = source_dir / file_name
