@@ -164,6 +164,7 @@ def clone_gh_repo(url):
     """
     pass
 
+
 def load_headers(headers_path, manuscript_path):
     """Loads usepackages.txt and newcommands.txt into manuscript.tex
     header.
@@ -184,11 +185,11 @@ def load_headers(headers_path, manuscript_path):
     """
     pass
 
-def load_bib_info(project_path):
-    """Loads user-defined bib files into manuscript.tex.
+def load_bib_info(project_path, manuscript_file_name="manuscript.tex"):
+    """Loads all bib files into manuscript.tex.
 
-    Finds all bib files and manuscript.tex in project-dir. Loads the
-    bib names into the \bibliography field in manuscript.tex.
+    Finds all bib files and manuscript.tex in project-dir, and loads the
+    bib names into the bibliography field in manuscript.tex.
 
     Parameters
     ----------
@@ -199,7 +200,33 @@ def load_bib_info(project_path):
     -------
     None
     """
-    pass
+    manuscript_path = project_path / manuscript_file_name
+    if not manuscript_path.exists():
+        raise FileNotFoundError(
+            f"Unable to find {manuscript_file_name} in "
+            f"{str(project_path)}. Please leave an issue on GitHub."
+        )
+    bibliography = []
+    bib_stems = []
+    for item in project_path.iterdir():
+        if item.is_file() and item.name.endswith(".bib"):
+            bib_stems.append(item.stem)
+    if len(bib_stems) != 0:
+        bibliography.append(r"\bibliography{" + ", ".join(sorted(bib_stems)) + "}")
+    manuscript_content = manuscript_path.read_text()
+    bib_in_manuscript, manuscript_without_bib = _split_lines_with_keyword(manuscript_content, r"\bibliography")
+    bibstyle_in_manuscript = []
+    for line in bib_in_manuscript.splitlines():
+        if line.lstrip().startswith(r"\bibliography{"):
+            continue
+        else:
+            bibstyle_in_manuscript.append(line)
+    bibliography.extend(bibstyle_in_manuscript)
+    bib_text = '\n'.join(bibliography)
+    manuscript_with_bib = _insert_to_manuscript(manuscript_without_bib, bib_text, r"\end{document}", "above")
+    manuscript_path.write_text(manuscript_with_bib)
+
+
 
 def remove_temporary_files(tmpdir_path):
     pass

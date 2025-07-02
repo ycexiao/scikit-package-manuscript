@@ -140,7 +140,7 @@ Contents of manuscript
         #   Expect the manuscript.tex content doesn't change.
         (
             False,
-            r""""
+            r"""
 \documentclass{article}
 \usepackage{package-in-manuscript}
 \newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
@@ -159,6 +159,7 @@ def test_load_bib_info(
     manuscript_path = user_filesystem["manuscript-path"]
     # a non-existing dir
     project_dir_with_bib = home_dir / "project-dir-with-bib"
+    project_dir_with_bib.mkdir()
     manuscript_in_project = project_dir_with_bib / "manuscript.tex"
     shutil.copy(manuscript_path, manuscript_in_project)
     if exists_bib:
@@ -182,7 +183,7 @@ def test_load_bib_info_bad(user_filesystem):
         FileNotFoundError,
         match=(
             "Unable to find manuscript.tex in "
-            f"{str(str(project_dir_without_manuscript))} "
+            f"{str(project_dir_without_manuscript)}. "
             "Please leave an issue on GitHub."
         ),
     ):
