@@ -181,12 +181,18 @@ def load_headers(project_path, manuscript_file_name="manuscript.tex"):
     manuscript.tex.
 
     Example content of usepackages.txt:
+    %begin of usepackages.txt
     \usepackage{mathtools}
-    ...
+    \usepackage{amsmath}
+    %end of usepackages.txt
+    The commented lines are not required.
 
     Example content of newcommands.txt:
-    \newcommand{\command_from_user_newcommands}[1]{\mathrm{#1}}
-    ...
+    %begin of newcommands.txt
+    \newcommand{\command1_from_user_newcommands}[1]{\mathbf{#1}}
+    \newcommand{\command2_from_user_newcommands}[1]{\mathrm{#1}}
+    %end of newcommands.txt
+    The commented lines are not required.
 
     Parameters
     ----------
