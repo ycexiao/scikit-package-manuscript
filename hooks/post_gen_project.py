@@ -68,39 +68,47 @@ def get_user_headers(repo_url):
 
 def extract_manuscript_packages(manuscript_path):
     contents = manuscript_path.read_text(encoding="utf-8")
-    packages, the_rest = split_usepackage_lines(contents)
+    packages, the_rest = _split_lines_with_keyword(contents, r"\usepackage")
     Path(manuscript_path).write_text(the_rest, encoding="utf-8")
     return packages
 
 
-def split_usepackage_lines(headers):
-    usepackage_lines = []
+def _split_lines_with_keyword(content, keyword):
+    lines_with_keyword = []
     other_lines = []
-    for line in headers.splitlines():
-        if line.lstrip().startswith(r"\usepackage"):
-            usepackage_lines.append(line)
+    for line in content.splitlines():
+        if line.lstrip().startswith(keyword):
+            lines_with_keyword.append(line)
         else:
             other_lines.append(line)
-    return "\n".join(usepackage_lines), "\n".join(other_lines)
+    return "\n".join(lines_with_keyword), "\n".join(other_lines)
 
 
-def insert_below_documentclass(manuscript_text, insert_text):
+def _insert_to_manuscript(manuscript_text, insert_text, location_keyword, method):
     lines = manuscript_text.splitlines()
     result_lines = []
     inserted = False
-    for line in lines:
-        result_lines.append(line)
-        if not inserted and r"\documentclass" in line:
-            result_lines.append(insert_text)
-            inserted = True
-    return "\n".join(result_lines)
+    if method=="below":
+        for line in lines:
+            result_lines.append(line)
+            if not inserted and line.lstrip().startswith(location_keyword):
+                result_lines.append(insert_text)
+                inserted = True
+    elif method=="above":
+        for line in lines:
+            if not inserted and line.lstrip().startswith(location_keyword):
+                result_lines.append(insert_text)
+                inserted = True
+            result_lines.append(line)
+
+    return "\n".join(result_lines)+"\n"
 
 
 def recompose_manuscript(manuscript_path, user_packages, user_commands):
     new_header = "\n".join([user_packages, user_commands])
     manuscript_contents = manuscript_path.read_text(encoding="utf-8")
-    manuscript_contents_with_header = insert_below_documentclass(
-        manuscript_contents, new_header
+    manuscript_contents_with_header = _insert_to_manuscript(
+        manuscript_contents, new_header, r"\documentclass", "below"
     )
     manuscript_path.write_text(
         manuscript_contents_with_header, encoding="utf-8"
@@ -164,32 +172,63 @@ def clone_gh_repo(url):
     """
     pass
 
+def load_headers(project_path, manuscript_file_name="manuscript.tex"):
+    r"""Loads user-defined latex packages and new-commands into the
+    mauscript template tex file.
 
-def load_headers(headers_path, manuscript_path):
-    """Loads usepackages.txt and newcommands.txt into manuscript.tex
-    header.
+    Find usepackages.txt, newcommands.txt, and manuscript.tex in
+    project directory. Insert usepacakgea and new commands into
+    manuscript.tex.
 
-    Updates manuscript.tex headers in place with the contents of the user-files.
+    Example content of usepackages.txt:
+    %begin of usepackages.txt
+    \usepackage{mathtools}
+    \usepackage{amsmath}
+    %end of usepackages.txt
+    The commented lines are not required.
 
+    Example content of newcommands.txt:
+    %begin of newcommands.txt
+    \newcommand{\command1_from_user_newcommands}[1]{\mathbf{#1}}
+    \newcommand{\command2_from_user_newcommands}[1]{\mathrm{#1}}
+    %end of newcommands.txt
+    The commented lines are not required.
 
     Parameters
     ----------
-    headers_path : Path
-      The path to the location of the usepackages.txt file
-    manuscript_path : Path
-      The path to the manuscript.tex file
+    project_path : Path
+      The path to the location of project directory.
 
     Returns
     -------
     None
     """
-    pass
+    manuscript_path = project_path / manuscript_file_name
+    if not manuscript_path.exists():
+        raise FileNotFoundError(
+            f"Unable to find {manuscript_file_name} in "
+            f"{str(project_path)}. Please leave an issue on GitHub."
+        )
+    headers = []
+    usepackage_path = Path(project_path / "usepackages.txt")
+    if usepackage_path.exists():
+        headers.append(usepackage_path.read_text())
+    manuscript_content = manuscript_path.read_text()
+    usepackage_in_manuscript, manuscript_without_usepackage = _split_lines_with_keyword(manuscript_content, r"\usepackage")
+    headers.append(usepackage_in_manuscript)
+    commands_path = Path(project_path / "newcommands.txt")
+    if commands_path.exists():
+        headers.append(commands_path.read_text())
+    headers_text = '\n'.join(headers)
+    manuscript_with_headers = _insert_to_manuscript(manuscript_without_usepackage, headers_text, r"\documentclass", "below")
+    manuscript_path.write_text(manuscript_with_headers)
+
 
 def load_bib_info(project_path, manuscript_file_name="manuscript.tex"):
-    """Loads all bib files into manuscript.tex.
+    """Finds all bib files and loads the names into the \thebibliography
+    field.
 
-    Finds all bib files and manuscript.tex in project-dir, and loads the
-    bib names into the bibliography field in manuscript.tex.
+    Updates manuscript.tex bibliography in place with the name-list of all bib files
 
     Parameters
     ----------
