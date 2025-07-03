@@ -4,8 +4,8 @@
 
 **Changed:**
 
-* Wrap post hook functions ``copy_all_files``, ``load_headers``, and 
-  ``load_bib_info`` in ``initialize_project```, and call 
+* Wrap post hook functions ``copy_all_files``, ``load_headers``, and
+  ``load_bib_info`` in ``initialize_project```, and call
   ``initialize_function`` in ``main()``.
 
 **Deprecated:**
