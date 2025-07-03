@@ -271,6 +271,31 @@ def remove_temporary_files(tmpdir_path):
     pass
 
 
+def initialize_proejct(template_name, user_repo_url, project_path, manuscript_file_name):
+    """Copy template and load headers and bib information into
+    manuscript.
+
+    Copy the selected template from ~/.cookiecutters. Load latex headers and bib
+    information from the user-supplied repo into mannuscript.tex found in the
+    project-dir.
+
+    Parameters
+    ----------
+    template_name : str
+      The name of the selected template.
+    user_repo_url : str
+      The URL of the GitHub repo where the latex headers and bib files are located.
+    project_path : Path
+      The path to the location of the project directory.
+    manuscript_file_name : str
+      The name of the manuscript file.
+
+    Returns
+    -------
+    None
+    """
+    pass
+
 def main():
     project_dir = Path().cwd()
     manuscript_path = project_dir / MANUSCRIPT_FILENAME

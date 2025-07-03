@@ -4,7 +4,9 @@
 
 **Changed:**
 
-* Rewrite main() with the refactored functions.
+* Wrap post hook functions ``copy_all_files``, ``load_headers``, and 
+  ``load_bib_info`` in ``initialize_project```, and call 
+  ``initialize_function`` in ``main()``.
 
 **Deprecated:**
 

@@ -1,4 +1,5 @@
 import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -6,6 +7,7 @@ import pytest
 from hooks.post_gen_project import (
     copy_all_files,
     copy_journal_template_files,
+    initialize_proejct,
     load_bib_info,
     load_headers,
 )
@@ -272,9 +274,41 @@ def test_load_bib_info_bad(user_filesystem):
         load_bib_info(project_dir_without_manuscript)
 
 
-# C1: Use "article" template and default latex repo.
-#   Expect manuscript.pdf is successfully built.
-# C2: Use "iucr" template and default latex repo.
-#   Expect manuscript.pdf is successfully built.
-def test_main():
-    assert False
+@pytest.mark.parametrize(
+    "template_name",
+    [
+        # C1: Use "article" template and default latex repo.
+        #   Expect manuscript.pdf is successfully built.
+        ("article"),
+        # C2: Use "iucr" template and default latex repo.
+        #   Expect manuscript.pdf is successfully built.
+        ("iucr"),
+    ],
+)
+def test_initialie_project(template_name, user_filesystem, capsys):
+    user_repo_url = (
+        "https://github.com/scikit-package/default-latex-headers.git"
+    )
+    project_dir = user_filesystem["project-dir"]
+    manuscript_name = "manuscript.tex"
+    initialize_proejct(
+        template_name, user_repo_url, project_dir, manuscript_name
+    )
+    manuscript_path = project_dir / manuscript_name
+    result = subprocess.run(
+        ["latex", "-interaction=nonstopmode", str(manuscript_path)],
+        cwd=project_dir,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        timeout=60,
+    )
+    expected_returncode = 0
+    actual_returncode = result.returncode
+    if expected_returncode != actual_returncode:
+        with capsys.disabled():
+            print(
+                f"Build {template_name} failed. Output message:\n"
+                + result.stdout.decode()
+                + result.stderr.decode(),
+            )
+    assert expected_returncode == actual_returncode
