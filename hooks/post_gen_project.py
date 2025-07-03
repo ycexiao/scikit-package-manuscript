@@ -271,7 +271,7 @@ def remove_temporary_files(tmpdir_path):
     pass
 
 
-def initialize_proejct(template_name, user_repo_url, project_path, manuscript_file_name):
+def initialize_project(template_name, user_repo_url, project_path, manuscript_file_name):
     """Copy template and load headers and bib information into
     manuscript.
 

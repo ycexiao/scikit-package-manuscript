@@ -7,7 +7,7 @@ import pytest
 from hooks.post_gen_project import (
     copy_all_files,
     copy_journal_template_files,
-    initialize_proejct,
+    initialize_project,
     load_bib_info,
     load_headers,
 )
@@ -285,13 +285,13 @@ def test_load_bib_info_bad(user_filesystem):
         ("iucr"),
     ],
 )
-def test_initialie_project(template_name, user_filesystem, capsys):
+def test_initialize_project(template_name, user_filesystem, capsys):
     user_repo_url = (
         "https://github.com/scikit-package/default-latex-headers.git"
     )
     project_dir = user_filesystem["project-dir"]
     manuscript_name = "manuscript.tex"
-    initialize_proejct(
+    initialize_project(
         template_name, user_repo_url, project_dir, manuscript_name
     )
     manuscript_path = project_dir / manuscript_name
