@@ -317,5 +317,5 @@ def test_initialize_project(template_name, user_filesystem, capsys):
             "Output message from LaTeX:\n"
             + result.stdout.decode()
             + result.stderr.decode()
-            )
+        )
     assert expected_returncode == actual_returncode
