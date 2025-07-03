@@ -270,3 +270,11 @@ def test_load_bib_info_bad(user_filesystem):
         ),
     ):
         load_bib_info(project_dir_without_manuscript)
+
+
+# C1: Use "article" template and default latex repo.
+#   Expect manuscript.pdf is successfully built.
+# C2: Use "iucr" template and default latex repo.
+#   Expect manuscript.pdf is successfully built.
+def test_main():
+    assert False
