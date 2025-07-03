@@ -1,14 +1,13 @@
 import shutil
-import shutil
 from pathlib import Path
 
 import pytest
 
 from hooks.post_gen_project import (
-    copy_journal_template_files,
     copy_all_files,
-    load_headers,
+    copy_journal_template_files,
     load_bib_info,
+    load_headers,
 )
 
 
@@ -199,7 +198,6 @@ def test_load_headers(
     load_headers(project_dir_with_header)
     actual_manuscript_content = manuscript_in_project.read_text()
     assert expected_manuscript_content == actual_manuscript_content
-
 
 
 @pytest.mark.parametrize(
