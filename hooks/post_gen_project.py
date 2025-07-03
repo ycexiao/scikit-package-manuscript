@@ -16,7 +16,7 @@ def get_scikit_manuscript_dir():
         if (candidate.is_dir() and
                 "scikit-package-manuscript" == candidate.name):
             return candidate.resolve()
-    return Path("couldn't find scikit-package-manuscript, but did "
+    return Path("Unable to find scikit-package-manuscript, but did "
                 f"find {*candidates,}")  # noqa E231
 
 
@@ -224,7 +224,7 @@ def load_headers(project_path, manuscript_file_name="manuscript.tex"):
     manuscript_path.write_text(manuscript_with_headers)
 
 
-def load_bib_info(manuscript_path):
+def load_bib_info(project_path, manuscript_file_name="manuscript.tex"):
     """Finds all bib files and loads the names into the \thebibliography
     field.
 
@@ -232,14 +232,40 @@ def load_bib_info(manuscript_path):
 
     Parameters
     ----------
-    manuscript_path : Path
-      The path to the manuscript.tex file
+    project_path : Path
+      The path to the location of the project directory.
 
     Returns
     -------
     None
     """
-    pass
+    manuscript_path = project_path / manuscript_file_name
+    if not manuscript_path.exists():
+        raise FileNotFoundError(
+            f"Unable to find {manuscript_file_name} in "
+            f"{str(project_path)}. Please leave an issue on GitHub."
+        )
+    bibliography = []
+    bib_stems = []
+    for item in project_path.iterdir():
+        if item.is_file() and item.name.endswith(".bib"):
+            bib_stems.append(item.stem)
+    if len(bib_stems) != 0:
+        bibliography.append(r"\bibliography{" + ", ".join(sorted(bib_stems)) + "}")
+    manuscript_content = manuscript_path.read_text()
+    bib_in_manuscript, manuscript_without_bib = _split_lines_with_keyword(manuscript_content, r"\bibliography")
+    bibstyle_in_manuscript = []
+    for line in bib_in_manuscript.splitlines():
+        if line.lstrip().startswith(r"\bibliography{"):
+            continue
+        else:
+            bibstyle_in_manuscript.append(line)
+    bibliography.extend(bibstyle_in_manuscript)
+    bib_text = '\n'.join(bibliography)
+    manuscript_with_bib = _insert_to_manuscript(manuscript_without_bib, bib_text, r"\end{document}", "above")
+    manuscript_path.write_text(manuscript_with_bib)
+
+
 
 def remove_temporary_files(tmpdir_path):
     pass
