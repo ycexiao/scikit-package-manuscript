@@ -305,10 +305,17 @@ def test_initialize_project(template_name, user_filesystem, capsys):
     expected_returncode = 0
     actual_returncode = result.returncode
     if expected_returncode != actual_returncode:
-        with capsys.disabled():
-            print(
-                f"Build {template_name} failed. Output message:\n"
-                + result.stdout.decode()
-                + result.stderr.decode(),
+        print(
+            f"Failed to build PDF file from template: {template_name}. "
+            "Output message from LaTeX:\n"
+            + result.stdout.decode()
+            + result.stderr.decode()
+        )
+    else:
+        print(
+            f"Successfully built PDF file from template: {template_name}. "
+            "Output message from LaTeX:\n"
+            + result.stdout.decode()
+            + result.stderr.decode()
             )
     assert expected_returncode == actual_returncode
