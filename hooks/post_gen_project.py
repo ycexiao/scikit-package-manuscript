@@ -3,6 +3,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from cookiecutter.vcs import clone
+
 MANUSCRIPT_FILENAME = "manuscript.tex"
 
 
@@ -269,6 +271,27 @@ def load_bib_info(project_path, manuscript_file_name="manuscript.tex"):
 
 def remove_temporary_files(tmpdir_path):
     pass
+
+
+def initialize_project(manuscript_name="manuscript.tex", user_repo_url="https://github.com/scikit-package/default-latex-headers.git"):
+    """Initialize a project with a manuscript file and latex files in
+    user-supplied GitHub repo.
+
+    Copy the journal template files, clone the user-defined LaTeX repo,
+    and load headers and bibliography in to the manuscript.
+
+    Parameters
+    ----------
+    manuscript_name : str
+      The name of the manuscript file to create.
+    user_repo_url : str
+      The URL of the GitHub repository containing user-defined LaTeX headers.
+
+    Returns
+    -------
+    None
+    """
+    return
 
 
 def main():
