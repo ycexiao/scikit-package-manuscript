@@ -6,9 +6,9 @@ import pytest
 from hooks.post_gen_project import (
     copy_all_files,
     copy_journal_template_files,
+    initialize_project,
     load_bib_info,
     load_headers,
-    initialize_project,
 )
 
 
