@@ -15,11 +15,15 @@ def get_scikit_manuscript_dir():
     candidates = []
     for candidate in cookiecutter_dir.iterdir():
         candidates.append(candidate)
-        if (candidate.is_dir() and
-                "scikit-package-manuscript" == candidate.name):
+        if (
+            candidate.is_dir()
+            and "scikit-package-manuscript" == candidate.name
+        ):
             return candidate.resolve()
-    return Path("Unable to find scikit-package-manuscript, but did "
-                f"find {*candidates,}")  # noqa E231
+    return Path(
+        "Unable to find scikit-package-manuscript, but did "
+        f"find {*candidates,}"
+    )  # noqa E231
 
 
 def copy_journal_template_files(journal_template_name, project_dir):
@@ -38,14 +42,18 @@ def copy_journal_template_files(journal_template_name, project_dir):
     cookiecutter_path = get_scikit_manuscript_dir()
     template_dir = cookiecutter_path / "templates" / journal_template_name
     if not template_dir.exists():
-        raise FileNotFoundError("Unable to find the provided journal_template: "
-                                f"{journal_template_name}. Please leave an issue "
-                                "on GitHub.")
+        raise FileNotFoundError(
+            "Unable to find the provided journal_template: "
+            f"{journal_template_name}. Please leave an issue "
+            "on GitHub."
+        )
 
     if not any(template_dir.iterdir()):
-        raise FileNotFoundError(f"Template {journal_template_name} found but "
-                                "it contains no files. Please leave an issue "
-                                "on GitHub.")
+        raise FileNotFoundError(
+            f"Template {journal_template_name} found but "
+            "it contains no files. Please leave an issue "
+            "on GitHub."
+        )
     for item in template_dir.iterdir():
         dest = project_dir / item.name
         if item.is_dir():
@@ -62,9 +70,9 @@ def get_user_headers(repo_url):
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         subprocess.run(["git", "clone", repo_url, str(tmp_path)], check=True)
-        for item in tmp_path.glob('**/*'):
+        for item in tmp_path.glob("**/*"):
             if item.is_file() and str(item).endswith(".tex"):
-                headers += item.read_text()+'\n'
+                headers += item.read_text() + "\n"
     return headers
 
 
@@ -86,24 +94,26 @@ def _split_lines_with_keyword(content, keyword):
     return "\n".join(lines_with_keyword), "\n".join(other_lines)
 
 
-def _insert_to_manuscript(manuscript_text, insert_text, location_keyword, method):
+def _insert_to_manuscript(
+    manuscript_text, insert_text, location_keyword, method
+):
     lines = manuscript_text.splitlines()
     result_lines = []
     inserted = False
-    if method=="below":
+    if method == "below":
         for line in lines:
             result_lines.append(line)
             if not inserted and line.lstrip().startswith(location_keyword):
                 result_lines.append(insert_text)
                 inserted = True
-    elif method=="above":
+    elif method == "above":
         for line in lines:
             if not inserted and line.lstrip().startswith(location_keyword):
                 result_lines.append(insert_text)
                 inserted = True
             result_lines.append(line)
 
-    return "\n".join(result_lines)+"\n"
+    return "\n".join(result_lines) + "\n"
 
 
 def recompose_manuscript(manuscript_path, user_packages, user_commands):
@@ -115,6 +125,7 @@ def recompose_manuscript(manuscript_path, user_packages, user_commands):
     manuscript_path.write_text(
         manuscript_contents_with_header, encoding="utf-8"
     )
+
 
 def copy_all_files(source_dir, target_dir):
     """Copies files from a package's resource directory to a target
@@ -174,6 +185,7 @@ def clone_gh_repo(url):
     """
     pass
 
+
 def load_headers(project_path, manuscript_file_name="manuscript.tex"):
     r"""Loads user-defined latex packages and new-commands into the
     mauscript template tex file.
@@ -216,13 +228,17 @@ def load_headers(project_path, manuscript_file_name="manuscript.tex"):
     if usepackage_path.exists():
         headers.append(usepackage_path.read_text())
     manuscript_content = manuscript_path.read_text()
-    usepackage_in_manuscript, manuscript_without_usepackage = _split_lines_with_keyword(manuscript_content, r"\usepackage")
+    usepackage_in_manuscript, manuscript_without_usepackage = (
+        _split_lines_with_keyword(manuscript_content, r"\usepackage")
+    )
     headers.append(usepackage_in_manuscript)
     commands_path = Path(project_path / "newcommands.txt")
     if commands_path.exists():
         headers.append(commands_path.read_text())
-    headers_text = '\n'.join(headers)
-    manuscript_with_headers = _insert_to_manuscript(manuscript_without_usepackage, headers_text, r"\documentclass", "below")
+    headers_text = "\n".join(headers)
+    manuscript_with_headers = _insert_to_manuscript(
+        manuscript_without_usepackage, headers_text, r"\documentclass", "below"
+    )
     manuscript_path.write_text(manuscript_with_headers)
 
 
@@ -253,9 +269,13 @@ def load_bib_info(project_path, manuscript_file_name="manuscript.tex"):
         if item.is_file() and item.name.endswith(".bib"):
             bib_stems.append(item.stem)
     if len(bib_stems) != 0:
-        bibliography.append(r"\bibliography{" + ", ".join(sorted(bib_stems)) + "}")
+        bibliography.append(
+            r"\bibliography{" + ", ".join(sorted(bib_stems)) + "}"
+        )
     manuscript_content = manuscript_path.read_text()
-    bib_in_manuscript, manuscript_without_bib = _split_lines_with_keyword(manuscript_content, r"\bibliography")
+    bib_in_manuscript, manuscript_without_bib = _split_lines_with_keyword(
+        manuscript_content, r"\bibliography"
+    )
     bibstyle_in_manuscript = []
     for line in bib_in_manuscript.splitlines():
         if line.lstrip().startswith(r"\bibliography{"):
@@ -263,17 +283,22 @@ def load_bib_info(project_path, manuscript_file_name="manuscript.tex"):
         else:
             bibstyle_in_manuscript.append(line)
     bibliography.extend(bibstyle_in_manuscript)
-    bib_text = '\n'.join(bibliography)
-    manuscript_with_bib = _insert_to_manuscript(manuscript_without_bib, bib_text, r"\end{document}", "above")
+    bib_text = "\n".join(bibliography)
+    manuscript_with_bib = _insert_to_manuscript(
+        manuscript_without_bib, bib_text, r"\end{document}", "above"
+    )
     manuscript_path.write_text(manuscript_with_bib)
-
 
 
 def remove_temporary_files(tmpdir_path):
     pass
 
 
-def initialize_project(manuscript_name="manuscript.tex", user_repo_url="https://github.com/scikit-package/default-latex-headers.git"):
+def initialize_project(
+    template_name,
+    manuscript_name="manuscript.tex",
+    user_repo_url="https://github.com/scikit-package/default-latex-headers.git",
+):
     """Initialize a project with a manuscript file and latex files in
     user-supplied GitHub repo.
 
@@ -282,6 +307,8 @@ def initialize_project(manuscript_name="manuscript.tex", user_repo_url="https://
 
     Parameters
     ----------
+    template_name : str
+      The name of the journal template.
     manuscript_name : str
       The name of the manuscript file to create.
     user_repo_url : str
@@ -297,10 +324,13 @@ def initialize_project(manuscript_name="manuscript.tex", user_repo_url="https://
 def main():
     project_dir = Path().cwd()
     manuscript_path = project_dir / MANUSCRIPT_FILENAME
-    if ("{{ cookiecutter.latex_headers_repo_url }}" ==
-            "use-scikit-package-default"):
-        user_headers_repo_url = \
+    if (
+        "{{ cookiecutter.latex_headers_repo_url }}"
+        == "use-scikit-package-default"
+    ):
+        user_headers_repo_url = (
             "https://github.com/scikit-package/default-latex-headers.git"
+        )
     else:
         user_headers_repo_url = "{{ cookiecutter.latex_headers_repo_url }}"
     copy_journal_template_files(
