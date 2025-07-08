@@ -8,6 +8,7 @@ from hooks.post_gen_project import (
     copy_journal_template_files,
     load_bib_info,
     load_headers,
+    initialize_project,
 )
 
 
@@ -270,3 +271,10 @@ def test_load_bib_info_bad(user_filesystem):
         ),
     ):
         load_bib_info(project_dir_without_manuscript)
+
+
+# C1: use a template with manuscrip.tex and a GitHub repo with usepackages.txt,
+#   newcommands.txt and bib files. Expect usepackages, commands and bib info
+#   are inserted into the manuscrip.tex
+def test_initialize_project():
+    assert False
