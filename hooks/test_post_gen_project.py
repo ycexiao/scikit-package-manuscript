@@ -279,8 +279,9 @@ def test_load_bib_info_bad(user_filesystem):
 def test_initialize_project(user_filesystem, mock_home, mock_clone):
     project_dir = user_filesystem["project-dir"]
     user_repo_url = "https://example.com/repo.git"
-    initialize_project("article", "manuscript.tex", user_repo_url)
-    manuscript_path = project_dir / "manuscript.tex"
+    manuscript_name = "manuscript-in-spm.tex"
+    initialize_project("article", project_dir, manuscript_name, user_repo_url)
+    manuscript_path = project_dir / manuscript_name
     actual_manuscript_content = manuscript_path.read_text()
     expected_manuscript_content = r"""
 \documentclass{article}
@@ -293,6 +294,5 @@ Contents of manuscript
 \bibliography{bib-in-project, user-bib-file-1, user-bib-file-2}
 \bibliographystyle{chicago}
 \end{document}
-        r"""
-
+"""
     assert expected_manuscript_content == actual_manuscript_content

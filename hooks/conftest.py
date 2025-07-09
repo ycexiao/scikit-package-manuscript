@@ -19,6 +19,7 @@ Contents of manuscript
 \bibliographystyle{chicago}
 \end{document}
 """,
+        "bib-in-project.bib": r"""Contents of bib-in-project.bib""",
     }
     yield spm_template_files
 
@@ -63,6 +64,7 @@ def user_filesystem(
     # │           ├── other
     # │           └── article
     # │               ├── article-cls-in-spm.cls
+    # │               ├── bib-in-project.bib
     # │               └── manuscript-in-spm.tex
     # ├── empty-user-repo-dir
     # ├── user-repo-dir
