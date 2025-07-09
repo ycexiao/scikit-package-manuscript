@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from unittest import mock
 
@@ -101,3 +102,16 @@ def user_filesystem(
         "manuscript-path": manuscript_path,
     }
     yield important_paths
+
+
+@pytest.fixture
+def mock_clone(user_filesystem):
+    user_repo_dir = user_filesystem["user-repo-dir"]
+    with mock.patch("subprocess.check_output") as mock_check_output:
+        mock_check_output.return_value = True
+
+        def side_effect(cmd, cwd, stderr):
+            shutil.copytree(user_repo_dir, cwd, dirs_exist_ok=True)
+
+        mock_check_output.side_effect = side_effect
+        yield mock_check_output
