@@ -109,11 +109,14 @@ def user_filesystem(
 @pytest.fixture
 def mock_clone(user_filesystem):
     user_repo_dir = user_filesystem["user-repo-dir"]
-    with mock.patch("subprocess.check_output") as mock_check_output:
-        mock_check_output.return_value = True
 
-        def side_effect(cmd, cwd, stderr):
-            shutil.copytree(user_repo_dir, cwd, dirs_exist_ok=True)
+    with mock.patch("hooks.post_gen_project.clone") as mock_check_output:
+
+        def side_effect(user_repo_url, checkout, clone_to_dir):
+            temp_cloned_repo_dir = Path(clone_to_dir) / "tmp-cloned-repo-dir"
+            user_repo_dir = user_filesystem["user-repo-dir"]
+            shutil.copytree(user_repo_dir, str(temp_cloned_repo_dir))
+            return str(temp_cloned_repo_dir)
 
         mock_check_output.side_effect = side_effect
         yield mock_check_output
