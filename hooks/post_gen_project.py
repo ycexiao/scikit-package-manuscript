@@ -296,7 +296,6 @@ def remove_temporary_files(tmpdir_path):
 
 def initialize_project(
     template_name,
-    project_dir,
     manuscript_name="manuscript.tex",
     user_repo_url="https://github.com/scikit-package/default-latex-headers.git",
 ):
@@ -310,8 +309,6 @@ def initialize_project(
     ----------
     template_name : str
       The name of the journal template.
-    project_dir : Path
-      The path to the created manuscript project.
     manuscript_name : str
       The name of the manuscript file to create.
     user_repo_url : str
@@ -321,6 +318,7 @@ def initialize_project(
     -------
     None
     """
+    project_dir = Path().cwd()
     scikit_manuscript_dir = get_scikit_manuscript_dir()
     copy_journal_template_files(template_name, project_dir)
     manuscript_pah = project_dir / manuscript_name

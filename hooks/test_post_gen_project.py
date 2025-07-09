@@ -273,17 +273,19 @@ def test_load_bib_info_bad(user_filesystem):
         load_bib_info(project_dir_without_manuscript)
 
 
-# C1: use a template with manuscrip.tex and a GitHub repo with usepackages.txt,
-#   newcommands.txt and bib files. Expect usepackages, commands and bib info
-#   are inserted into the manuscrip.tex
-def test_initialize_project(user_filesystem, mock_home, mock_clone):
-    project_dir = user_filesystem["project-dir"]
-    user_repo_url = "https://example.com/repo.git"
-    manuscript_name = "manuscript-in-spm.tex"
-    initialize_project("article", project_dir, manuscript_name, user_repo_url)
-    manuscript_path = project_dir / manuscript_name
-    actual_manuscript_content = manuscript_path.read_text()
-    expected_manuscript_content = r"""
+# C1: use a template with manuscrip.tex and a mocked GitHub repo URL which
+#   will return usepackages.txt, newcommands.txt and bib files.
+#   Expect usepackages, commands and bib info are inserted into
+#   the manuscrip.tex
+def test_initialize_project(user_filesystem, mock_home, mock_clone, tmpdir):
+    with tmpdir.as_cwd():
+        # a placeholder URL
+        user_repo_url = "https://example.com/repo.git"
+        manuscript_name = "manuscript-in-spm.tex"
+        initialize_project("article", manuscript_name, user_repo_url)
+        manuscript_path = Path(tmpdir) / manuscript_name
+        actual_manuscript_content = manuscript_path.read_text()
+        expected_manuscript_content = r"""
 \documentclass{article}
 \usepackage{package-from-user-usepackage}
 \usepackage{package-in-manuscript}
@@ -295,4 +297,4 @@ Contents of manuscript
 \bibliographystyle{chicago}
 \end{document}
 """
-    assert expected_manuscript_content == actual_manuscript_content
+        assert expected_manuscript_content == actual_manuscript_content
