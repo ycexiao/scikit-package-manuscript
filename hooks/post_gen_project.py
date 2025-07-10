@@ -192,7 +192,7 @@ def load_headers(project_path, manuscript_file_name="manuscript.tex"):
     commands_path = Path(project_path / "newcommands.txt")
     if commands_path.exists():
         headers.append(commands_path.read_text())
-    headers = list(filter(lambda x: len(x) != 0, headers))
+    headers = [text for text in headers if len(text) != 0]
     headers_text = "\n".join(headers)
     manuscript_with_headers = _insert_to_manuscript(
         manuscript_without_usepackage, headers_text, r"\documentclass", "below"
@@ -288,13 +288,15 @@ def initialize_project(
 
 
 def main():
-    if "{{ cookiecutter.latex_repo_url }}" == "use-scikit-package-default":
+    if (
+        "{{ cookiecutter.user_latex_repo_url }}"
+        == "use-scikit-package-default"
+    ):
         user_repo_url = (
             "https://github.com/scikit-package/default-latex-headers.git"
         )
     else:
-        user_repo_url = "{{ cookiecutter.latex_repo_url }}"
-
+        user_repo_url = "{{ cookiecutter.user_latex_repo_url }}"
     initialize_project(
         "{{ cookiecutter.journal_template }}",
         MANUSCRIPT_FILENAME,

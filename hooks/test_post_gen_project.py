@@ -214,7 +214,7 @@ def test_load_headers(
 \newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
 \begin{document}
 Contents of manuscript
-\bibliography{bib-in-project, user-bib-file-1, user-bib-file-2}
+\bibliography{bib-in-spm, user-bib-file-1, user-bib-file-2}
 \bibliographystyle{chicago}
 \end{document}
 """,
@@ -246,7 +246,7 @@ def test_load_bib_info(
     manuscript_in_project = project_dir_with_bib / "manuscript.tex"
     shutil.copy(manuscript_path, manuscript_in_project)
     if exists_bib:
-        Path(project_dir_with_bib / "bib-in-project.bib").touch()
+        Path(project_dir_with_bib / "bib-in-spm.bib").touch()
         Path(project_dir_with_bib / "user-bib-file-1.bib").touch()
         Path(project_dir_with_bib / "user-bib-file-2.bib").touch()
     load_bib_info(project_dir_with_bib)
@@ -283,8 +283,8 @@ def test_initialize_project(user_filesystem, mock_home, mock_clone, tmpdir):
         user_repo_url = "https://example.com/repo.git"
         manuscript_name = "manuscript-in-spm.tex"
         initialize_project("article", manuscript_name, user_repo_url)
-        manuscript_path = Path(tmpdir) / manuscript_name
-        actual_manuscript_content = manuscript_path.read_text()
+        actual_manuscript_path = Path(tmpdir) / manuscript_name
+        actual_manuscript_content = actual_manuscript_path.read_text()
         expected_manuscript_content = r"""
 \documentclass{article}
 \usepackage{package-from-user-usepackage}
@@ -293,7 +293,7 @@ def test_initialize_project(user_filesystem, mock_home, mock_clone, tmpdir):
 \newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
 \begin{document}
 Contents of manuscript
-\bibliography{bib-in-project, user-bib-file-1, user-bib-file-2}
+\bibliography{bib-in-spm, user-bib-file-1, user-bib-file-2}
 \bibliographystyle{chicago}
 \end{document}
 """
