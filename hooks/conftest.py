@@ -108,8 +108,6 @@ def user_filesystem(
 
 @pytest.fixture
 def mock_clone(user_filesystem):
-    user_repo_dir = user_filesystem["user-repo-dir"]
-
     with mock.patch("hooks.post_gen_project.clone") as mock_check_output:
 
         def side_effect(user_repo_url, checkout, clone_to_dir):
