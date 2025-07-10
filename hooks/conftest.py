@@ -108,7 +108,7 @@ def user_filesystem(
 
 @pytest.fixture
 def mock_clone(user_filesystem):
-    with mock.patch("hooks.post_gen_project.clone") as mock_check_output:
+    with mock.patch("hooks.post_gen_project.clone") as mocked_clone:
 
         def side_effect(user_repo_url, checkout, clone_to_dir):
             temp_cloned_repo_dir = Path(clone_to_dir) / "tmp-cloned-repo-dir"
@@ -116,5 +116,5 @@ def mock_clone(user_filesystem):
             shutil.copytree(user_repo_dir, str(temp_cloned_repo_dir))
             return str(temp_cloned_repo_dir)
 
-        mock_check_output.side_effect = side_effect
-        yield mock_check_output
+        mocked_clone.side_effect = side_effect
+        yield mocked_clone
