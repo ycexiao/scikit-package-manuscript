@@ -63,26 +63,6 @@ def copy_journal_template_files(journal_template_name, project_dir):
     return
 
 
-def get_user_headers(repo_url):
-    """Clone a Git repository containing LaTeX header files into a
-    string."""
-    headers = ""
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp_path = Path(tmp)
-        subprocess.run(["git", "clone", repo_url, str(tmp_path)], check=True)
-        for item in tmp_path.glob("**/*"):
-            if item.is_file() and str(item).endswith(".tex"):
-                headers += item.read_text() + "\n"
-    return headers
-
-
-def extract_manuscript_packages(manuscript_path):
-    contents = manuscript_path.read_text(encoding="utf-8")
-    packages, the_rest = _split_lines_with_keyword(contents, r"\usepackage")
-    Path(manuscript_path).write_text(the_rest, encoding="utf-8")
-    return packages
-
-
 def _split_lines_with_keyword(content, keyword):
     lines_with_keyword = []
     other_lines = []
@@ -114,17 +94,6 @@ def _insert_to_manuscript(
             result_lines.append(line)
 
     return "\n".join(result_lines) + "\n"
-
-
-def recompose_manuscript(manuscript_path, user_packages, user_commands):
-    new_header = "\n".join([user_packages, user_commands])
-    manuscript_contents = manuscript_path.read_text(encoding="utf-8")
-    manuscript_contents_with_header = _insert_to_manuscript(
-        manuscript_contents, new_header, r"\documentclass", "below"
-    )
-    manuscript_path.write_text(
-        manuscript_contents_with_header, encoding="utf-8"
-    )
 
 
 def copy_all_files(source_dir, target_dir):
@@ -172,20 +141,6 @@ def copy_all_files(source_dir, target_dir):
     return
 
 
-def clone_gh_repo(url):
-    """Clone the repo to a temporary location.
-
-    Parameters
-    ----------
-    url : a url
-
-    Returns
-    -------
-    The path to the contents of the repo on the local files-system
-    """
-    pass
-
-
 def load_headers(project_path, manuscript_file_name="manuscript.tex"):
     r"""Loads user-defined latex packages and new-commands into the
     mauscript template tex file.
@@ -201,12 +156,14 @@ def load_headers(project_path, manuscript_file_name="manuscript.tex"):
     %end of usepackages.txt
     The commented lines are not required.
 
+    {% raw %}
     Example content of newcommands.txt:
     %begin of newcommands.txt
     \newcommand{\command1_from_user_newcommands}[1]{\mathbf{#1}}
     \newcommand{\command2_from_user_newcommands}[1]{\mathrm{#1}}
     %end of newcommands.txt
     The commented lines are not required.
+    {% endraw %}
 
     Parameters
     ----------
@@ -235,6 +192,7 @@ def load_headers(project_path, manuscript_file_name="manuscript.tex"):
     commands_path = Path(project_path / "newcommands.txt")
     if commands_path.exists():
         headers.append(commands_path.read_text())
+    headers = [text for text in headers if len(text) != 0]
     headers_text = "\n".join(headers)
     manuscript_with_headers = _insert_to_manuscript(
         manuscript_without_usepackage, headers_text, r"\documentclass", "below"
@@ -290,10 +248,6 @@ def load_bib_info(project_path, manuscript_file_name="manuscript.tex"):
     manuscript_path.write_text(manuscript_with_bib)
 
 
-def remove_temporary_files(tmpdir_path):
-    pass
-
-
 def initialize_project(
     template_name,
     manuscript_name="manuscript.tex",
@@ -318,29 +272,36 @@ def initialize_project(
     -------
     None
     """
+    project_dir = Path().cwd()
+    scikit_manuscript_dir = get_scikit_manuscript_dir()
+    copy_journal_template_files(template_name, project_dir)
+    manuscript_pah = project_dir / manuscript_name
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+        user_repo_dir = clone(
+            user_repo_url, checkout=None, clone_to_dir=temp_path
+        )
+        copy_all_files(Path(user_repo_dir), project_dir)
+    load_headers(project_dir, manuscript_name)
+    load_bib_info(project_dir, manuscript_name)
     return
 
 
 def main():
-    project_dir = Path().cwd()
-    manuscript_path = project_dir / MANUSCRIPT_FILENAME
     if (
-        "{{ cookiecutter.latex_headers_repo_url }}"
+        "{{ cookiecutter.user_latex_repo_url }}"
         == "use-scikit-package-default"
     ):
-        user_headers_repo_url = (
+        user_repo_url = (
             "https://github.com/scikit-package/default-latex-headers.git"
         )
     else:
-        user_headers_repo_url = "{{ cookiecutter.latex_headers_repo_url }}"
-    copy_journal_template_files(
-        "{{ cookiecutter.journal_template }}", project_dir
+        user_repo_url = "{{ cookiecutter.user_latex_repo_url }}"
+    initialize_project(
+        "{{ cookiecutter.journal_template }}",
+        MANUSCRIPT_FILENAME,
+        user_repo_url,
     )
-    user_headers = get_user_headers(user_headers_repo_url)
-    manuscript_packages = extract_manuscript_packages(manuscript_path)
-    user_packages, the_rest = split_usepackage_lines(user_headers)
-    all_packages = "\n".join([manuscript_packages, user_packages])
-    recompose_manuscript(manuscript_path, all_packages, the_rest)
 
 
 if __name__ == "__main__":

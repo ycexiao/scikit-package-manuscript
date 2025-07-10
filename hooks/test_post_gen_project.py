@@ -6,6 +6,7 @@ import pytest
 from hooks.post_gen_project import (
     copy_all_files,
     copy_journal_template_files,
+    initialize_project,
     load_bib_info,
     load_headers,
 )
@@ -213,7 +214,7 @@ def test_load_headers(
 \newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
 \begin{document}
 Contents of manuscript
-\bibliography{bib-in-project, user-bib-file-1, user-bib-file-2}
+\bibliography{bib-in-spm, user-bib-file-1, user-bib-file-2}
 \bibliographystyle{chicago}
 \end{document}
 """,
@@ -245,7 +246,7 @@ def test_load_bib_info(
     manuscript_in_project = project_dir_with_bib / "manuscript.tex"
     shutil.copy(manuscript_path, manuscript_in_project)
     if exists_bib:
-        Path(project_dir_with_bib / "bib-in-project.bib").touch()
+        Path(project_dir_with_bib / "bib-in-spm.bib").touch()
         Path(project_dir_with_bib / "user-bib-file-1.bib").touch()
         Path(project_dir_with_bib / "user-bib-file-2.bib").touch()
     load_bib_info(project_dir_with_bib)
@@ -272,8 +273,28 @@ def test_load_bib_info_bad(user_filesystem):
         load_bib_info(project_dir_without_manuscript)
 
 
-# C1: use a template with manuscrip.tex and a GitHub repo with usepackages.txt,
-#   newcommands.txt and bib files. Expect usepackages, commands and bib info
-#   are inserted into the manuscrip.tex
-def test_initialize_project():
-    assert False
+# C1: use a template with manuscrip.tex and a mocked GitHub repo URL which
+#   will return usepackages.txt, newcommands.txt and bib files.
+#   Expect usepackages, commands and bib info are inserted into
+#   the manuscrip.tex
+def test_initialize_project(user_filesystem, mock_home, mock_clone, tmpdir):
+    with tmpdir.as_cwd():
+        # a placeholder URL
+        user_repo_url = "https://example.com/repo.git"
+        manuscript_name = "manuscript-in-spm.tex"
+        initialize_project("article", manuscript_name, user_repo_url)
+        actual_manuscript_path = Path(tmpdir) / manuscript_name
+        actual_manuscript_content = actual_manuscript_path.read_text()
+        expected_manuscript_content = r"""
+\documentclass{article}
+\usepackage{package-from-user-usepackage}
+\usepackage{package-in-manuscript}
+\newcommand{\command_from_user_newcommands}[1]{\mathrm{#1}}
+\newcommand{\command_in_manuscript}[1]{\mathbf{#1}}
+\begin{document}
+Contents of manuscript
+\bibliography{bib-in-spm, user-bib-file-1, user-bib-file-2}
+\bibliographystyle{chicago}
+\end{document}
+"""
+        assert expected_manuscript_content == actual_manuscript_content

@@ -1,6 +1,6 @@
 {
   "project_name": "manuscript-name",
   "journal_template": ["article", "iucr"],
-  "latex_headers_repo_url": "use-scikit-package-default",
+  "user_latex_repo_url": "use-scikit-package-default",
   "_repo_dir": "{{ cookiecutter._template }}"
 }

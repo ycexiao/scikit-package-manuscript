@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from unittest import mock
 
@@ -18,6 +19,7 @@ Contents of manuscript
 \bibliographystyle{chicago}
 \end{document}
 """,
+        "bib-in-spm.bib": r"""Contents of bib-in-spm.bib""",
     }
     yield spm_template_files
 
@@ -62,6 +64,7 @@ def user_filesystem(
     # │           ├── other
     # │           └── article
     # │               ├── article-cls-in-spm.cls
+    # │               ├── bib-in-spm.bib
     # │               └── manuscript-in-spm.tex
     # ├── empty-user-repo-dir
     # ├── user-repo-dir
@@ -101,3 +104,17 @@ def user_filesystem(
         "manuscript-path": manuscript_path,
     }
     yield important_paths
+
+
+@pytest.fixture
+def mock_clone(user_filesystem):
+    with mock.patch("hooks.post_gen_project.clone") as mocked_clone:
+
+        def side_effect(user_repo_url, checkout, clone_to_dir):
+            temp_cloned_repo_dir = Path(clone_to_dir) / "tmp-cloned-repo-dir"
+            user_repo_dir = user_filesystem["user-repo-dir"]
+            shutil.copytree(user_repo_dir, str(temp_cloned_repo_dir))
+            return str(temp_cloned_repo_dir)
+
+        mocked_clone.side_effect = side_effect
+        yield mocked_clone
