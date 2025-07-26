@@ -1,4 +1,4 @@
-This is a Cookiecutter template used in `scikit-package` project to create a configured manuscript folder. Please visit the latest developments and the official documentation [here](https://scikit-package.github.io/scikit-package/). 
+This is a Cookiecutter template used in `scikit-package` project to create a configured manuscript folder. Please visit the latest developments and the official documentation [here](https://scikit-package.github.io/scikit-package/).
 
 # Features:
 
@@ -10,10 +10,10 @@ This is a Cookiecutter template used in `scikit-package` project to create a con
 
 Install `scikit-pacakge` in the environment and follow the prompts:
 
-   ```bash
-   conda create -n skpkg-env scikit-package
-   conda install skpkg-env
-   package create manuscript
-   ```
+```bash
+conda create -n skpkg-env scikit-package
+conda install skpkg-env
+package create manuscript
+```
 
-For a full tutorial, please see [official documentation](https://scikit-package.github.io/scikit-package/). 
+For a full tutorial, please see [official documentation](https://scikit-package.github.io/scikit-package/).
