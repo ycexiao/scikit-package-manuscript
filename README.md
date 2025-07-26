@@ -1,23 +1,19 @@
-This is a Cookiecutter template for creating Overleaf LaTex paper repositories using Billinge group standards.
+This is a Cookiecutter template used in `scikit-package` project to create a configured manuscript folder. Please visit the latest developments and the official documentation [here](https://scikit-package.github.io/scikit-package/). 
 
 # Features:
 
 - Auto-generates the repository name, paper title, and one author name.
-- Uses the IUCR LaTeX template (`iucr.bst`, `iucrit.bst`, `iucrjournals.cls`, `fig1.png`).
-- Includes dynamically generated files `cmds-general.tex`, `cmds-programs.tex`, and `packages.tex` from https://github.com/Billingegroup/latex-headers.
-- Includes empty .bib files: `bg-pdf-standards.bib`, `billinge-group-bib.bib`, `hand-coded.bib`, and `repo_name.bib`.
+- Provides the IUCR LaTeX template (`iucr.bst`, `iucrit.bst`, `iucrjournals.cls`, `fig1.png`).
+- Includes a [default LaTeX repository](https://github.com/Billingegroup/latex-headers) with dynamically generated files: `cmds-general.tex`, `cmds-programs.tex`, and `packages.tex`.
 
 # HOW TO USE
 
-1. cd to the directory that contains this folder.
-   Install Cookiecutter, run the template, and follow the prompts:
+Install `scikit-pacakge` in the environment and follow the prompts:
 
    ```bash
-   cookiecutter cookiecutter-overleaf
+   conda create -n skpkg-env scikit-package
+   conda install skpkg-env
+   package create manuscript
    ```
 
-2. Push to GitHub:
-   ```bash
-   git remote add origin git@github.com:yourusername/repo_name.git
-   git push -u origin main
-   ```
+For a full tutorial, please see [official documentation](https://scikit-package.github.io/scikit-package/). 
